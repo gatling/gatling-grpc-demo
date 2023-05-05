@@ -1,0 +1,9 @@
+.bsp/
+.idea/
+.metals/
+target/
+
+*.iml
+
+/src/test/resources/ssl/*
+!/src/test/resources/ssl/.gitkeep
