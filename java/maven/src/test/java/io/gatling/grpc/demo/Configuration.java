@@ -13,7 +13,6 @@ public class Configuration {
 
     public static GrpcProtocolBuilder baseGrpcProtocol(String host, int port) {
         return grpc.forAddress(host, port)
-            //.shareChannel()
-            .useTransportSecurity("ssl/ca.crt");
+            .useCustomCertificateTrustManager("ssl/ca.crt");
     }
 }

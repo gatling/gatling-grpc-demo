@@ -3,8 +3,12 @@ package io.gatling.grpc.demo;
 import io.gatling.grpc.demo.calculator.*;
 import io.gatling.javaapi.core.*;
 import io.gatling.javaapi.grpc.*;
-
 import io.grpc.Status;
+
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.grpc.GrpcDsl.*;
@@ -30,131 +34,142 @@ public class CalculatorSimulation extends Simulation {
                     )
             );
 
-    //  private val serverStream = grpc("Prime Number Decomposition")
-    //    .serverStream("serverStream") // will end up as session attribute, giving it a name is not
-    // useful?
-    //
-    //  private val serverStreaming = scenario("Calculator Server Streaming")
-    //    .exec(_.set("primeFactors", List.empty[Long]))
-    //    .exec(
-    //      serverStream
-    //        .start(CalculatorServiceGrpc.METHOD_PRIME_NUMBER_DECOMPOSITION) {
-    //          PrimeNumberDecompositionRequest(
-    //            number = 109987656890L
-    //          )
-    //        }
-    //        .endCheck(statusCode.is(Status.Code.OK))
-    //        .extract(_.primeFactor.some)(_.saveAs("primeFactor"))
-    //        // FIXME (session, session) -> Validation[Session] ?
-    //        .sessionCombiner { (main, branch) =>
-    //          val primeFactors = main("primeFactors").as[List[Long]]
-    //          val latestPrimeFactor = branch("primeFactor").as[Long]
-    //          main.set("primeFactors", primeFactors :+ latestPrimeFactor)
-    //            .remove("primeFactor")
-    //        }
-    //        .timestampExtractor { (session, message, t) =>
-    //          println(s"$t: $message")
-    //          // TimestampExtractor.IgnoreMessage
-    //          t
-    //        }
-    //    )
-    //    // NextMessage also handles StreamEnd
-    //    // There is no way to loop until stream end
-    //    .exec(serverStream.copy(requestName = "next message").reconciliate(waitFor = NextMessage))
-    //    .exec(serverStream.copy(requestName = "next message").reconciliate(waitFor = NextMessage))
-    //    .exec(serverStream.copy(requestName = "next message").reconciliate(waitFor = NextMessage))
-    //    .exec(serverStream.copy(requestName = "next message").reconciliate(waitFor = NextMessage))
-    //    .exec(serverStream.copy(requestName = "stream end").reconciliate(waitFor = StreamEnd))
-    //    // Fails if stream has completed
-    //    // Will still perform sessionCombiner with the data from previous request, duplicating
-    // stuff...
-    //    // .exec(serverStream.cancelStream)
-    //    .exec { session =>
-    //      for {
-    //        primeFactors <- session("primeFactors").validate[List[Long]]
-    //      } yield {
-    //        println(s"primeFactors: $primeFactors")
-    //        session
-    //      }
-    //    }
-    //
-    //  private val clientStream = grpc("Compute Average")
-    //    .clientStream("clientStream") // will end up as session attribute, giving it a name is not
-    // useful?
-    //
-    //  private val clientStreaming = scenario("Calculator Client Streaming")
-    //    .exec(
-    //      clientStream
-    //        .connect(CalculatorServiceGrpc.METHOD_COMPUTE_AVERAGE)
-    //        .extract(_.average.some)(_.saveAs("average"))
-    //    )
-    //    .repeat(10) {
-    //      pause(100.milliseconds, 200.milliseconds)
-    //        .exec(clientStream.send { _ =>
-    //          ComputeAverageRequest(
-    //            number = ThreadLocalRandom.current.nextInt(0, 1000)
-    //          )
-    //        })
-    //    }
-    //    .exec(clientStream.completeAndWait)
-    //    .exec { session =>
-    //      for {
-    //        average <- session("average").validate[Double]
-    //      } yield {
-    //        println(s"average: $average")
-    //        session
-    //      }
-    //    }
-    //
-    //  val biDirectionalStream = grpc("Find Maximum")
-    //    .bidiStream("biDirectionalStream")
-    //
-    //  private val biDirectionalStreaming = scenario("Calculator Bi Directional Streaming")
-    //    .exec(
-    //      biDirectionalStream
-    //        .connect(CalculatorServiceGrpc.METHOD_FIND_MAXIMUM)
-    //        .endCheck(statusCode.is(Status.Code.OK))
-    //        .extract(_.maximum.some)(_.saveAs("maximum"))
-    //        // FIXME (session, session) -> Validation[Session] ?
-    //        .sessionCombiner { (main, branch) =>
-    //          val maximum = main("maximum").as[Int]
-    //          val latestMaximum = branch("maximum").as[Int]
-    //          println(s"received maximum: $latestMaximum (prev: $maximum)")
-    //          main.set("maximum", latestMaximum)
-    //        }
-    //        .timestampExtractor { (session, message, t) =>
-    //          println(s"$t: $message")
-    //          //TimestampExtractor.IgnoreMessage
-    //          t
-    //        }
-    //    )
-    //    .repeat(10) {
-    //      pause(100.milliseconds, 200.milliseconds)
-    //        .exec(biDirectionalStream.send { _ =>
-    //          val number = ThreadLocalRandom.current.nextInt(0, 1000)
-    //          println(s"sending: $number")
-    //          FindMaximumRequest(
-    //            number = number
-    //          )
-    //        })
-    //    }
-    //    .exec(biDirectionalStream.copy(requestName = "Complete").complete)
-    //    .exec { session =>
-    //      for {
-    //        maximum <- session("maximum").validate[Int]
-    //      } yield {
-    //        println(s"maximum: $maximum")
-    //        session
-    //      }
-    //    }
+    GrpcServerStreamingServiceBuilder<PrimeNumberDecompositionRequest, PrimeNumberDecompositionResponse> serverStream =
+        grpc("Prime Number Decomposition")
+            .serverStream(CalculatorServiceGrpc.getPrimeNumberDecompositionMethod())
+            .check(
+                status().is(Status.Code.OK),
+                response(PrimeNumberDecompositionResponse::getPrimeFactor)
+                    .saveAs("primeFactor")
+            )
+            .reconcile((main, branch) -> {
+                List<Long> primeFactors = main.getList("primeFactors");
+                Long latestPrimeFactor = branch.getLongWrapper("primeFactor");
+                primeFactors.add(latestPrimeFactor);
+                return main.set("primeFactors", primeFactors)
+                    .remove("primeFactor");
+            })
+            .responseTimePolicy((session, message, timestamp) -> timestamp);
+
+    ScenarioBuilder serverStreaming = scenario("Calculator Server Streaming")
+        .exec(session -> session.set("primeFactors", new ArrayList<Long>()))
+        .exec(
+            serverStream
+                .send(
+                    PrimeNumberDecompositionRequest.newBuilder()
+                        .setNumber(109987656890L)
+                        .build()
+                )
+        )
+        .exec(
+            serverStream.await(Duration.ofSeconds(1))
+                .check(
+                    response(PrimeNumberDecompositionResponse::getPrimeFactor)
+                        .is(2L)
+                )
+        )
+        .exec(
+            serverStream.await(Duration.ofSeconds(1))
+                .check(
+                    response(PrimeNumberDecompositionResponse::getPrimeFactor)
+                        .is(5L)
+                )
+        )
+        .exec(
+            serverStream.await(Duration.ofSeconds(1))
+                .check(
+                    response(PrimeNumberDecompositionResponse::getPrimeFactor)
+                        .is(17L)
+                )
+        )
+        .exec(
+            serverStream.await(Duration.ofSeconds(1))
+                .check(
+                    response(PrimeNumberDecompositionResponse::getPrimeFactor)
+                        .is(97L)
+                )
+        )
+        .exec(
+            serverStream.await(Duration.ofSeconds(1))
+                .check(
+                    response(PrimeNumberDecompositionResponse::getPrimeFactor)
+                        .is(6669961L)
+                )
+        )
+        .exec(session -> {
+            List<Long> primeFactors = session.getList("primeFactors");
+            System.out.println("primeFactors: " + primeFactors);
+            return session;
+        });
+
+    GrpcClientStreamingServiceBuilder<ComputeAverageRequest, ComputeAverageResponse> clientStream =
+        grpc("Compute Average")
+            .clientStream(CalculatorServiceGrpc.getComputeAverageMethod())
+            .check(
+                response(ComputeAverageResponse::getAverage).saveAs("average")
+            );
+
+    ScenarioBuilder clientStreaming = scenario("Calculator Client Streaming")
+        // FIXME missing start/connect?
+        .repeat(10).on(
+            exec(clientStream.send(session ->
+                ComputeAverageRequest.newBuilder()
+                    .setNumber(ThreadLocalRandom.current().nextInt(0, 1000))
+                    .build())
+            )
+        )
+        .exec(clientStream.awaitStreamEnd())
+        .exec(session -> {
+            double average = session.getDouble("average");
+            System.out.println("average: " + average);
+            return session;
+        });
+
+    GrpcBidirectionalStreamingServiceBuilder<FindMaximumRequest, FindMaximumResponse> biDirectionalStream =
+        grpc("Find Maximum")
+            .bidiStream(CalculatorServiceGrpc.getFindMaximumMethod())
+            .check(
+                status().is(Status.Code.OK),
+                response(FindMaximumResponse::getMaximum)
+                    .saveAs("maximum"))
+            .reconcile((main, branch) -> {
+                int maximum = main.getInt("maximum");
+                int latestMaximum = branch.getInt("maximum");
+                System.out.println("received maximum: " + latestMaximum + "(prev: " + maximum + ")");
+                return main.set("maximum", latestMaximum);
+            })
+            .responseTimePolicy((session, message, timestamp) -> timestamp);
+
+    ScenarioBuilder biDirectionalStreaming = scenario("Calculator Bi Directional Streaming")
+        // FIXME missing start/connect?
+        .repeat(10).on(
+            exec(biDirectionalStream.send(session ->
+                FindMaximumRequest.newBuilder()
+                    .setNumber(ThreadLocalRandom.current().nextInt(0, 1000))
+                    .build()
+            ))
+        )
+        .exec(biDirectionalStream.awaitStreamEnd())
+        .exec(session -> {
+            int maximum = session.getInt("maximum");
+            System.out.println("maximum: " + maximum);
+            return session;
+        });
 
     ScenarioBuilder deadlines =
         scenario("Calculator w/ Deadlines")
             .exec(
                 grpc("Square Root")
                     .unary(CalculatorServiceGrpc.getSquareRootMethod())
-                    .send(SquareRootRequest.newBuilder().setNumber(-2).build())
-                    .check(status().is(Status.Code.INVALID_ARGUMENT)));
+                    .send(
+                        SquareRootRequest.newBuilder()
+                            .setNumber(-2)
+                            .build()
+                    )
+                    .check(
+                        status().is(Status.Code.INVALID_ARGUMENT)
+                    )
+            );
 
     {
         String name = System.getProperty("grpc.scenario");
@@ -163,9 +178,9 @@ public class CalculatorSimulation extends Simulation {
             scn = unary;
         } else {
             scn = switch (name) {
-                // case "serverStreaming" -> serverStreaming;
-                // case "clientStreaming" -> clientStreaming;
-                // case "biDirectionalStreaming" -> biDirectionalStreaming;
+                case "serverStreaming" -> serverStreaming;
+                case "clientStreaming" -> clientStreaming;
+                case "biDirectionalStreaming" -> biDirectionalStreaming;
                 case "deadlines" -> deadlines;
                 default -> unary;
             };
