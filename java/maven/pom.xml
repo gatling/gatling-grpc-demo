@@ -14,7 +14,7 @@
         <!-- comment the 2 lines above and uncomment the line bellow if you're compiling with JDK 11 or 17 -->
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <gatling.version>3.9.3</gatling.version>
+        <gatling.version>3.9.5</gatling.version>
         <gatling-grpc.version>${project.version}</gatling-grpc.version>
         <gatling-maven-plugin.version>4.3.1</gatling-maven-plugin.version>
         <grpc.version>1.54.1</grpc.version>
@@ -66,7 +66,6 @@
                 <configuration>
                     <!-- Enterprise Cloud (https://cloud.gatling.io/) configuration reference: https://gatling.io/docs/gatling/reference/current/extensions/maven_plugin/#working-with-gatling-enterprise-cloud -->
                     <!-- Enterprise Self-Hosted configuration reference: https://gatling.io/docs/gatling/reference/current/extensions/maven_plugin/#working-with-gatling-enterprise-self-hosted -->
-                    <simulationClass>io.gatling.grpc.demo.GreetingSimulation</simulationClass>
                 </configuration>
             </plugin>
             <plugin>
