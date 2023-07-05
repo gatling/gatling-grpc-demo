@@ -1,13 +1,12 @@
 package io.gatling.grpc
 
-import scala.concurrent.duration._
-
 import io.gatling.core.Predef._
 import io.gatling.core.session.Expression
 import io.gatling.grpc.Predef._
 import io.gatling.grpc.demo.greeting._
-
 import io.grpc.{ CallOptions, Status }
+
+import scala.concurrent.duration._
 
 class GreetingSimulation extends Simulation {
 
@@ -32,7 +31,7 @@ class GreetingSimulation extends Simulation {
           } yield GreetRequest(greeting = Some(greeting))
         }
         .check(
-          status.is(Status.Code.OK),
+          statusCode.is(Status.Code.OK),
           response((response: GreetResponse) => response.result)
             .is("Hello #{firstName} #{lastName}")
         )
@@ -49,10 +48,10 @@ class GreetingSimulation extends Simulation {
           } yield GreetRequest(greeting = Some(greeting))
         }
         .callOptions(CallOptions.DEFAULT.withDeadlineAfter(100, MILLISECONDS))
-        .check(status.is(Status.Code.DEADLINE_EXCEEDED))
+        .check(statusCode.is(Status.Code.DEADLINE_EXCEEDED))
     )
 
-  // eval sys.props("grpc.scenario") = "serverStreaming"
+  // eval sys.props("grpc.scenario") = "deadlines"
   // Gatling / testOnly io.gatling.grpc.GreetSimulation
 
   private val scn = sys.props.get("grpc.scenario") match {
@@ -61,10 +60,6 @@ class GreetingSimulation extends Simulation {
   }
 
   setUp(
-    scn.inject(
-      atOnceUsers(1)
-//      constantConcurrentUsers(100).during(30.seconds)
-//      rampUsers(10).during(10.seconds)
-    )
+    scn.inject(atOnceUsers(1))
   ).protocols(baseGrpcProtocol)
 }

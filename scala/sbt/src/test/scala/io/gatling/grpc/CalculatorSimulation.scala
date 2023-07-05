@@ -2,9 +2,12 @@ package io.gatling.grpc
 
 import io.gatling.core.Predef._
 import io.gatling.grpc.Predef._
+import io.gatling.grpc.demo.calculator
 import io.gatling.grpc.demo.calculator._
+import io.grpc.{ Metadata, Status }
 
-import io.grpc.Status
+import java.util.concurrent.ThreadLocalRandom
+import scala.concurrent.duration._
 
 class CalculatorSimulation extends Simulation {
 
@@ -22,124 +25,158 @@ class CalculatorSimulation extends Simulation {
           )
         )
         .check(
+          header(Metadata.Key.of("header-san", Metadata.ASCII_STRING_MARSHALLER)).is("oui"),
+          header(Metadata.Key.of("header-san", Metadata.ASCII_STRING_MARSHALLER)).findAll.is(List("oui", "non")),
+          header(Metadata.Key.of("header-chan", Metadata.ASCII_STRING_MARSHALLER)).is("nope"),
+          trailer(Metadata.Key.of("trailer-san", Metadata.ASCII_STRING_MARSHALLER)).is("salutations maximales 1"),
+          trailer(Metadata.Key.of("trailer-san", Metadata.ASCII_STRING_MARSHALLER)).findAll.is(List("salutations maximales 1", "salutations maximales 2")),
+          trailer(Metadata.Key.of("trailer-chan", Metadata.ASCII_STRING_MARSHALLER)).is("salutations maximales"),
           response((result: SumResponse) => result.sumResult).is(3)
         )
     )
 
-//  private val serverStream = grpc("Prime Number Decomposition")
-//    .serverStream("serverStream") // will end up as session attribute, giving it a name is not useful?
-//
-//  private val serverStreaming = scenario("Calculator Server Streaming")
-//    .exec(_.set("primeFactors", List.empty[Long]))
-//    .exec(
-//      serverStream
-//        .start(CalculatorServiceGrpc.METHOD_PRIME_NUMBER_DECOMPOSITION) {
-//          PrimeNumberDecompositionRequest(
-//            number = 109987656890L
-//          )
-//        }
-//        .endCheck(statusCode.is(Status.Code.OK))
-//        .extract(_.primeFactor.some)(_.saveAs("primeFactor"))
-//        // FIXME (session, session) -> Validation[Session] ?
-//        .sessionCombiner { (main, branch) =>
-//          val primeFactors = main("primeFactors").as[List[Long]]
-//          val latestPrimeFactor = branch("primeFactor").as[Long]
-//          main.set("primeFactors", primeFactors :+ latestPrimeFactor)
-//            .remove("primeFactor")
-//        }
-//        .timestampExtractor { (session, message, t) =>
-//          println(s"$t: $message")
-//          // TimestampExtractor.IgnoreMessage
-//          t
-//        }
-//    )
-//    // NextMessage also handles StreamEnd
-//    // There is no way to loop until stream end
-//    .exec(serverStream.copy(requestName = "next message").reconciliate(waitFor = NextMessage))
-//    .exec(serverStream.copy(requestName = "next message").reconciliate(waitFor = NextMessage))
-//    .exec(serverStream.copy(requestName = "next message").reconciliate(waitFor = NextMessage))
-//    .exec(serverStream.copy(requestName = "next message").reconciliate(waitFor = NextMessage))
-//    .exec(serverStream.copy(requestName = "stream end").reconciliate(waitFor = StreamEnd))
-//    // Fails if stream has completed
-//    // Will still perform sessionCombiner with the data from previous request, duplicating stuff...
-//    // .exec(serverStream.cancelStream)
-//    .exec { session =>
-//      for {
-//        primeFactors <- session("primeFactors").validate[List[Long]]
-//      } yield {
-//        println(s"primeFactors: $primeFactors")
-//        session
-//      }
-//    }
-//
-//  private val clientStream = grpc("Compute Average")
-//    .clientStream("clientStream") // will end up as session attribute, giving it a name is not useful?
-//
-//  private val clientStreaming = scenario("Calculator Client Streaming")
-//    .exec(
-//      clientStream
-//        .connect(CalculatorServiceGrpc.METHOD_COMPUTE_AVERAGE)
-//        .extract(_.average.some)(_.saveAs("average"))
-//    )
-//    .repeat(10) {
-//      pause(100.milliseconds, 200.milliseconds)
-//        .exec(clientStream.send { _ =>
-//          ComputeAverageRequest(
-//            number = ThreadLocalRandom.current.nextInt(0, 1000)
-//          )
-//        })
-//    }
-//    .exec(clientStream.completeAndWait)
-//    .exec { session =>
-//      for {
-//        average <- session("average").validate[Double]
-//      } yield {
-//        println(s"average: $average")
-//        session
-//      }
-//    }
-//
-//  val biDirectionalStream = grpc("Find Maximum")
-//    .bidiStream("biDirectionalStream")
-//
-//  private val biDirectionalStreaming = scenario("Calculator Bi Directional Streaming")
-//    .exec(
-//      biDirectionalStream
-//        .connect(CalculatorServiceGrpc.METHOD_FIND_MAXIMUM)
-//        .endCheck(statusCode.is(Status.Code.OK))
-//        .extract(_.maximum.some)(_.saveAs("maximum"))
-//        // FIXME (session, session) -> Validation[Session] ?
-//        .sessionCombiner { (main, branch) =>
-//          val maximum = main("maximum").as[Int]
-//          val latestMaximum = branch("maximum").as[Int]
-//          println(s"received maximum: $latestMaximum (prev: $maximum)")
-//          main.set("maximum", latestMaximum)
-//        }
-//        .timestampExtractor { (session, message, t) =>
-//          println(s"$t: $message")
-//          //TimestampExtractor.IgnoreMessage
-//          t
-//        }
-//    )
-//    .repeat(10) {
-//      pause(100.milliseconds, 200.milliseconds)
-//        .exec(biDirectionalStream.send { _ =>
-//          val number = ThreadLocalRandom.current.nextInt(0, 1000)
-//          println(s"sending: $number")
-//          FindMaximumRequest(
-//            number = number
-//          )
-//        })
-//    }
-//    .exec(biDirectionalStream.copy(requestName = "Complete").complete)
-//    .exec { session =>
-//      for {
-//        maximum <- session("maximum").validate[Int]
-//      } yield {
-//        println(s"maximum: $maximum")
-//        session
-//      }
-//    }
+  private val serverStream = grpc("Prime Number Decomposition")
+    .serverStream(CalculatorServiceGrpc.METHOD_PRIME_NUMBER_DECOMPOSITION)
+    .check(
+      statusCode.is(Status.Code.OK),
+      response((result: PrimeNumberDecompositionResponse) => result.primeFactor)
+        .saveAs("primeFactor")
+    )
+    .reconcile { (main, branch) =>
+      for {
+        primeFactors <- main("primeFactors").validate[List[Long]]
+        latestPrimeFactor <- branch("primeFactor").validate[Long]
+      } yield {
+        main
+          .set("primeFactors", primeFactors :+ latestPrimeFactor)
+          .remove("primeFactor")
+      }
+    }
+    .responseTimePolicy((_, _, timestamp) => timestamp)
+
+  private val serverStreaming = scenario("Calculator Server Streaming")
+    .exec(_.set("primeFactors", List.empty[Long]))
+    .exec(
+      serverStream
+        .send(
+          PrimeNumberDecompositionRequest(
+            number = 109987656890L
+          )
+        )
+    )
+    .exec(
+      serverStream
+        .await(1.second)
+        .check(
+          response((result: PrimeNumberDecompositionResponse) => result.primeFactor)
+            .is(2L)
+        )
+    )
+    .exec(
+      serverStream
+        .await(1.second)
+        .check(
+          response((result: PrimeNumberDecompositionResponse) => result.primeFactor)
+            .is(5L)
+        )
+    )
+    .exec(
+      serverStream
+        .await(1.second)
+        .check(
+          response((result: PrimeNumberDecompositionResponse) => result.primeFactor)
+            .is(17L)
+        )
+    )
+    .exec(
+      serverStream
+        .await(1.second)
+        .check(
+          response((result: PrimeNumberDecompositionResponse) => result.primeFactor)
+            .is(97L)
+        )
+    )
+    .exec(
+      serverStream
+        .await(1.second)
+        .check(
+          response((result: PrimeNumberDecompositionResponse) => result.primeFactor)
+            .is(6669961L)
+        )
+    )
+    .exec { session =>
+      for {
+        primeFactors <- session("primeFactors").validate[List[Long]]
+      } yield {
+        println(s"primeFactors: $primeFactors")
+        session
+      }
+    }
+
+  private val clientStream = grpc("Compute Average")
+    .clientStream(CalculatorServiceGrpc.METHOD_COMPUTE_AVERAGE) // will end up as session attribute, giving it a name is not useful?
+    .check(
+      response((result: ComputeAverageResponse) => result.average)
+        .saveAs("average")
+    )
+
+  private val clientStreaming = scenario("Calculator Client Streaming")
+    .exec(clientStream.start)
+    .repeat(10) {
+      pause(100.milliseconds, 200.milliseconds)
+        .exec(clientStream.send { _ =>
+          ComputeAverageRequest(
+            number = ThreadLocalRandom.current.nextInt(0, 1000)
+          )
+        })
+    }
+    .exec(clientStream.awaitStreamEnd)
+    .exec { session =>
+      for {
+        average <- session("average").validate[Double]
+      } yield {
+        println(s"average: $average")
+        session
+      }
+    }
+
+  private val bidirectionalStream = grpc("Find Maximum")
+    .bidiStream(CalculatorServiceGrpc.METHOD_FIND_MAXIMUM)
+    .check(
+      statusCode.is(Status.Code.OK),
+      response((result: calculator.FindMaximumResponse) => result.maximum)
+        .saveAs("maximum")
+    )
+    .reconcile { (main, branch) =>
+      for {
+        maximum <- main("maximum").validate[Int]
+        latestMaximum <- branch("maximum").validate[Int]
+      } yield {
+        println(s"received maximum: $latestMaximum (prev: $maximum)")
+        main.set("maximum", latestMaximum)
+      }
+    }
+    .responseTimePolicy((_, _, timestamp) => timestamp)
+
+  private val bidirectionalStreaming = scenario("Calculator Bidirectional Streaming")
+    .exec(bidirectionalStream.start)
+    .repeat(10) {
+      exec(bidirectionalStream.send { _ =>
+        val number = ThreadLocalRandom.current.nextInt(0, 1000)
+        FindMaximumRequest(
+          number = number
+        )
+      })
+    }
+    .exec(bidirectionalStream.awaitStreamEnd)
+    .exec { session =>
+      for {
+        maximum <- session("maximum").validate[Int]
+      } yield {
+        println(s"maximum: $maximum")
+        session
+      }
+    }
 
   private val deadlines = scenario("Calculator w/ Deadlines")
     .exec(
@@ -151,21 +188,22 @@ class CalculatorSimulation extends Simulation {
           )
         )
         .check(
-          status.is(Status.Code.INVALID_ARGUMENT)
+          statusCode.is(Status.Code.INVALID_ARGUMENT)
         )
     )
 
+  // eval sys.props("grpc.scenario") = "serverStreaming"
+  // Gatling / testOnly io.gatling.grpc.CalculatorSimulation
+
   private val scn = sys.props.get("grpc.scenario") match {
-    // case Some("serverStreaming")        => serverStreaming
-    // case Some("clientStreaming")        => clientStreaming
-    // case Some("biDirectionalStreaming") => biDirectionalStreaming
-    case Some("deadlines") => deadlines
-    case _                 => unary
+    case Some("serverStreaming")        => serverStreaming
+    case Some("clientStreaming")        => clientStreaming
+    case Some("bidirectionalStreaming") => bidirectionalStreaming
+    case Some("deadlines")              => deadlines
+    case _                              => unary
   }
 
   setUp(
-    scn.inject(
-      atOnceUsers(1)
-    )
+    scn.inject(atOnceUsers(1))
   ).protocols(baseGrpcProtocol)
 }

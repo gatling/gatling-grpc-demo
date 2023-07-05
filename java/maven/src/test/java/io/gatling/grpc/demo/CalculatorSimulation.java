@@ -1,8 +1,12 @@
 package io.gatling.grpc.demo;
 
 import io.gatling.grpc.demo.calculator.*;
-import io.gatling.javaapi.core.*;
-import io.gatling.javaapi.grpc.*;
+import io.gatling.javaapi.core.ScenarioBuilder;
+import io.gatling.javaapi.core.Simulation;
+import io.gatling.javaapi.grpc.GrpcBidirectionalStreamingServiceBuilder;
+import io.gatling.javaapi.grpc.GrpcClientStreamingServiceBuilder;
+import io.gatling.javaapi.grpc.GrpcProtocolBuilder;
+import io.gatling.javaapi.grpc.GrpcServerStreamingServiceBuilder;
 import io.grpc.Status;
 
 import java.time.Duration;
@@ -38,7 +42,7 @@ public class CalculatorSimulation extends Simulation {
         grpc("Prime Number Decomposition")
             .serverStream(CalculatorServiceGrpc.getPrimeNumberDecompositionMethod())
             .check(
-                status().is(Status.Code.OK),
+                statusCode().is(Status.Code.OK),
                 response(PrimeNumberDecompositionResponse::getPrimeFactor)
                     .saveAs("primeFactor")
             )
@@ -125,11 +129,11 @@ public class CalculatorSimulation extends Simulation {
             return session;
         });
 
-    GrpcBidirectionalStreamingServiceBuilder<FindMaximumRequest, FindMaximumResponse> biDirectionalStream =
+    GrpcBidirectionalStreamingServiceBuilder<FindMaximumRequest, FindMaximumResponse> bidirectionalStream =
         grpc("Find Maximum")
             .bidiStream(CalculatorServiceGrpc.getFindMaximumMethod())
             .check(
-                status().is(Status.Code.OK),
+                statusCode().is(Status.Code.OK),
                 response(FindMaximumResponse::getMaximum)
                     .saveAs("maximum"))
             .reconcile((main, branch) -> {
@@ -140,16 +144,16 @@ public class CalculatorSimulation extends Simulation {
             })
             .responseTimePolicy((session, message, timestamp) -> timestamp);
 
-    ScenarioBuilder biDirectionalStreaming = scenario("Calculator Bi Directional Streaming")
+    ScenarioBuilder bidirectionalStreaming = scenario("Calculator Bidirectional Streaming")
         // FIXME missing start/connect?
         .repeat(10).on(
-            exec(biDirectionalStream.send(session ->
+            exec(bidirectionalStream.send(session ->
                 FindMaximumRequest.newBuilder()
                     .setNumber(ThreadLocalRandom.current().nextInt(0, 1000))
                     .build()
             ))
         )
-        .exec(biDirectionalStream.awaitStreamEnd())
+        .exec(bidirectionalStream.awaitStreamEnd())
         .exec(session -> {
             int maximum = session.getInt("maximum");
             System.out.println("maximum: " + maximum);
@@ -167,7 +171,7 @@ public class CalculatorSimulation extends Simulation {
                             .build()
                     )
                     .check(
-                        status().is(Status.Code.INVALID_ARGUMENT)
+                        statusCode().is(Status.Code.INVALID_ARGUMENT)
                     )
             );
 
@@ -180,7 +184,7 @@ public class CalculatorSimulation extends Simulation {
             scn = switch (name) {
                 case "serverStreaming" -> serverStreaming;
                 case "clientStreaming" -> clientStreaming;
-                case "biDirectionalStreaming" -> biDirectionalStreaming;
+                case "bidirectionalStreaming" -> bidirectionalStreaming;
                 case "deadlines" -> deadlines;
                 default -> unary;
             };

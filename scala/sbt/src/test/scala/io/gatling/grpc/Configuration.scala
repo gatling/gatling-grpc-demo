@@ -24,6 +24,5 @@ object Configuration {
   def baseGrpcProtocol(host: String, port: Int): GrpcProtocolBuilder =
     grpc
       .forAddress(host, port)
-      // .shareChannel
-      .useTransportSecurity("ssl/ca.crt")
+      .useCustomCertificateTrustManager("ssl/ca.crt")
 }
