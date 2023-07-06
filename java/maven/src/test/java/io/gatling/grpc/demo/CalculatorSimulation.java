@@ -114,7 +114,7 @@ public class CalculatorSimulation extends Simulation {
             );
 
     ScenarioBuilder clientStreaming = scenario("Calculator Client Streaming")
-        // FIXME missing start/connect?
+        .exec(clientStream.start())
         .repeat(10).on(
             exec(clientStream.send(session ->
                 ComputeAverageRequest.newBuilder()
@@ -145,7 +145,7 @@ public class CalculatorSimulation extends Simulation {
             .responseTimePolicy((session, message, timestamp) -> timestamp);
 
     ScenarioBuilder bidirectionalStreaming = scenario("Calculator Bidirectional Streaming")
-        // FIXME missing start/connect?
+        .exec(bidirectionalStream.start())
         .repeat(10).on(
             exec(bidirectionalStream.send(session ->
                 FindMaximumRequest.newBuilder()
