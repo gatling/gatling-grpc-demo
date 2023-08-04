@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package echo;
+
+import "google/protobuf/empty.proto";
+
+option java_package = "io.gatling.grpc.demo.echo";
+option java_multiple_files = true;
+
+service EchoService {
+  rpc Echo(google.protobuf.Empty) returns (google.protobuf.Empty) {};
+}

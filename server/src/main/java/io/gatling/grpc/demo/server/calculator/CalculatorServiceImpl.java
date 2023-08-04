@@ -8,7 +8,6 @@ public class CalculatorServiceImpl extends CalculatorServiceGrpc.CalculatorServi
 
     @Override
     public void sum(SumRequest request, StreamObserver<SumResponse> responseObserver) {
-        System.out.println("sum: " + request.toString());
         int sum = request.getFirstNumber() + request.getSecondNumber();
         SumResponse response = SumResponse.newBuilder().setSumResult(sum).build();
         responseObserver.onNext(response);
@@ -19,14 +18,12 @@ public class CalculatorServiceImpl extends CalculatorServiceGrpc.CalculatorServi
     public void primeNumberDecomposition(
             PrimeNumberDecompositionRequest request,
             StreamObserver<PrimeNumberDecompositionResponse> responseObserver) {
-        System.out.println("primeNumberDecomposition: " + request.toString());
         try {
             long factor = 2;
             long number = request.getNumber();
             while (number > 1) {
                 if (number % factor == 0) {
                     number = number / factor;
-                    System.out.println("primeFactor: " + factor);
                     PrimeNumberDecompositionResponse response =
                             PrimeNumberDecompositionResponse.newBuilder()
                                     .setPrimeFactor(factor)

@@ -8,21 +8,13 @@ public class GreetingServiceImpl extends GreetingServiceGrpc.GreetingServiceImpl
 
     @Override
     public void greet(GreetRequest request, StreamObserver<GreetResponse> responseObserver) {
-        System.out.println("greet.request: " + request);
-
-        // Extract the fields we need
         Greeting greeting = request.getGreeting();
         String firstName = greeting.getFirstName();
         String lastName = greeting.getLastName();
 
-        // Create the response
         String result = "Hello " + firstName + " " + lastName;
         GreetResponse response = GreetResponse.newBuilder().setResult(result).build();
-
-        // Send the response
         responseObserver.onNext(response);
-
-        // Complete the RPC call
         responseObserver.onCompleted();
     }
 

@@ -1,7 +1,6 @@
 package io.gatling.grpc.demo.server.calculator;
 
-import io.grpc.Server;
-import io.grpc.ServerBuilder;
+import io.grpc.*;
 
 import java.io.IOException;
 
@@ -10,7 +9,6 @@ public class CalculatorServer {
         Server server =
                 ServerBuilder.forPort(50052)
                         .addService(new CalculatorServiceImpl())
-                        // .addService(ProtoReflectionService.newInstance())
                         .useTransportSecurity(
                                 ClassLoader.getSystemResourceAsStream("ssl/server.crt"),
                                 ClassLoader.getSystemResourceAsStream("ssl/server.pem"))
