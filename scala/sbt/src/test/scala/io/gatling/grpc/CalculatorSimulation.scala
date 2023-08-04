@@ -1,13 +1,14 @@
 package io.gatling.grpc
 
+import java.util.concurrent.ThreadLocalRandom
+
+import scala.concurrent.duration._
+
 import io.gatling.core.Predef._
 import io.gatling.grpc.Predef._
-import io.gatling.grpc.demo.calculator
 import io.gatling.grpc.demo.calculator._
-import io.grpc.{ Metadata, Status }
 
-import java.util.concurrent.ThreadLocalRandom
-import scala.concurrent.duration._
+import io.grpc.Status
 
 class CalculatorSimulation extends Simulation {
 
@@ -25,12 +26,6 @@ class CalculatorSimulation extends Simulation {
           )
         )
         .check(
-          header(Metadata.Key.of("header-san", Metadata.ASCII_STRING_MARSHALLER)).is("oui"),
-          header(Metadata.Key.of("header-san", Metadata.ASCII_STRING_MARSHALLER)).findAll.is(List("oui", "non")),
-          header(Metadata.Key.of("header-chan", Metadata.ASCII_STRING_MARSHALLER)).is("nope"),
-          trailer(Metadata.Key.of("trailer-san", Metadata.ASCII_STRING_MARSHALLER)).is("salutations maximales 1"),
-          trailer(Metadata.Key.of("trailer-san", Metadata.ASCII_STRING_MARSHALLER)).findAll.is(List("salutations maximales 1", "salutations maximales 2")),
-          trailer(Metadata.Key.of("trailer-chan", Metadata.ASCII_STRING_MARSHALLER)).is("salutations maximales"),
           response((result: SumResponse) => result.sumResult).is(3)
         )
     )
@@ -39,23 +34,12 @@ class CalculatorSimulation extends Simulation {
     .serverStream(CalculatorServiceGrpc.METHOD_PRIME_NUMBER_DECOMPOSITION)
     .check(
       statusCode.is(Status.Code.OK),
-      response((result: PrimeNumberDecompositionResponse) => result.primeFactor)
-        .saveAs("primeFactor")
+      response((response: PrimeNumberDecompositionResponse) => response.primeFactor)
+        .transform(p => p == 2L || p == 5L || p == 17L || p == 97L || p == 6669961L)
+        .is(true)
     )
-    .reconcile { (main, branch) =>
-      for {
-        primeFactors <- main("primeFactors").validate[List[Long]]
-        latestPrimeFactor <- branch("primeFactor").validate[Long]
-      } yield {
-        main
-          .set("primeFactors", primeFactors :+ latestPrimeFactor)
-          .remove("primeFactor")
-      }
-    }
-    .responseTimePolicy((_, _, timestamp) => timestamp)
 
   private val serverStreaming = scenario("Calculator Server Streaming")
-    .exec(_.set("primeFactors", List.empty[Long]))
     .exec(
       serverStream
         .send(
@@ -64,58 +48,12 @@ class CalculatorSimulation extends Simulation {
           )
         )
     )
-    .exec(
-      serverStream
-        .await(1.second)
-        .check(
-          response((result: PrimeNumberDecompositionResponse) => result.primeFactor)
-            .is(2L)
-        )
-    )
-    .exec(
-      serverStream
-        .await(1.second)
-        .check(
-          response((result: PrimeNumberDecompositionResponse) => result.primeFactor)
-            .is(5L)
-        )
-    )
-    .exec(
-      serverStream
-        .await(1.second)
-        .check(
-          response((result: PrimeNumberDecompositionResponse) => result.primeFactor)
-            .is(17L)
-        )
-    )
-    .exec(
-      serverStream
-        .await(1.second)
-        .check(
-          response((result: PrimeNumberDecompositionResponse) => result.primeFactor)
-            .is(97L)
-        )
-    )
-    .exec(
-      serverStream
-        .await(1.second)
-        .check(
-          response((result: PrimeNumberDecompositionResponse) => result.primeFactor)
-            .is(6669961L)
-        )
-    )
-    .exec { session =>
-      for {
-        primeFactors <- session("primeFactors").validate[List[Long]]
-      } yield {
-        println(s"primeFactors: $primeFactors")
-        session
-      }
-    }
+    .exec(serverStream.awaitStreamEnd)
 
   private val clientStream = grpc("Compute Average")
     .clientStream(CalculatorServiceGrpc.METHOD_COMPUTE_AVERAGE) // will end up as session attribute, giving it a name is not useful?
     .check(
+      statusCode.is(Status.Code.OK),
       response((result: ComputeAverageResponse) => result.average)
         .saveAs("average")
     )
@@ -125,11 +63,13 @@ class CalculatorSimulation extends Simulation {
     .repeat(10) {
       pause(100.milliseconds, 200.milliseconds)
         .exec(clientStream.send { _ =>
+          val number = ThreadLocalRandom.current.nextInt(0, 1000)
           ComputeAverageRequest(
-            number = ThreadLocalRandom.current.nextInt(0, 1000)
+            number = number
           )
         })
     }
+    .exec(clientStream.halfClose)
     .exec(clientStream.awaitStreamEnd)
     .exec { session =>
       for {
@@ -144,19 +84,9 @@ class CalculatorSimulation extends Simulation {
     .bidiStream(CalculatorServiceGrpc.METHOD_FIND_MAXIMUM)
     .check(
       statusCode.is(Status.Code.OK),
-      response((result: calculator.FindMaximumResponse) => result.maximum)
+      response((result: FindMaximumResponse) => result.maximum)
         .saveAs("maximum")
     )
-    .reconcile { (main, branch) =>
-      for {
-        maximum <- main("maximum").validate[Int]
-        latestMaximum <- branch("maximum").validate[Int]
-      } yield {
-        println(s"received maximum: $latestMaximum (prev: $maximum)")
-        main.set("maximum", latestMaximum)
-      }
-    }
-    .responseTimePolicy((_, _, timestamp) => timestamp)
 
   private val bidirectionalStreaming = scenario("Calculator Bidirectional Streaming")
     .exec(bidirectionalStream.start)
@@ -168,7 +98,12 @@ class CalculatorSimulation extends Simulation {
         )
       })
     }
-    .exec(bidirectionalStream.awaitStreamEnd)
+    .exec(bidirectionalStream.halfClose)
+    .exec(bidirectionalStream.awaitStreamEnd { (main, forked) =>
+      for {
+        maximum <- forked("maximum").validate[Int]
+      } yield main.set("maximum", maximum)
+    })
     .exec { session =>
       for {
         maximum <- session("maximum").validate[Int]
@@ -192,8 +127,12 @@ class CalculatorSimulation extends Simulation {
         )
     )
 
-  // eval sys.props("grpc.scenario") = "serverStreaming"
   // Gatling / testOnly io.gatling.grpc.CalculatorSimulation
+  // eval sys.props("grpc.scenario") = "unary"
+  // eval sys.props("grpc.scenario") = "serverStreaming"
+  // eval sys.props("grpc.scenario") = "clientStreaming"
+  // eval sys.props("grpc.scenario") = "bidirectionalStreaming"
+  // eval sys.props("grpc.scenario") = "deadlines"
 
   private val scn = sys.props.get("grpc.scenario") match {
     case Some("serverStreaming")        => serverStreaming

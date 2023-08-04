@@ -17,7 +17,7 @@
         <gatling.version>3.9.5</gatling.version>
         <gatling-grpc.version>${project.version}</gatling-grpc.version>
         <gatling-maven-plugin.version>4.3.1</gatling-maven-plugin.version>
-        <grpc.version>1.54.1</grpc.version>
+        <grpc.version>1.57.0</grpc.version>
         <protobuf.version>3.22.3</protobuf.version>
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
