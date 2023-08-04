@@ -22,6 +22,7 @@
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
         <protoc-jar-maven-plugin.version>3.11.4</protoc-jar-maven-plugin.version>
+        <spotless.version>2.38.0</spotless.version>
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
     </properties>
 
@@ -117,6 +118,21 @@
                         </outputTarget>
                     </outputTargets>
                     <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless.version}</version>
+                <configuration>
+                    <java>
+                        <palantirJavaFormat/>
+                        <importOrder>
+                            <order>java|javax,scala,io.gatling,,\#</order>
+                        </importOrder>
+                        <removeUnusedImports/>
+                        <toggleOffOn/>
+                    </java>
                 </configuration>
             </plugin>
         </plugins>

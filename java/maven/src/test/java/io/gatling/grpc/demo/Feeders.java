@@ -23,10 +23,12 @@ public class Feeders {
     public static Supplier<Iterator<Map<String, Object>>> groups() {
         return () -> new Iterator<>() {
             int i = 1;
+
             @Override
             public boolean hasNext() {
                 return true;
             }
+
             @Override
             public Map<String, Object> next() {
                 return Map.of("groupName", (i++) % 100);

@@ -1,6 +1,7 @@
 package io.gatling.grpc.demo.server.calculator;
 
 import io.gatling.grpc.demo.calculator.*;
+
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
@@ -24,10 +25,9 @@ public class CalculatorServiceImpl extends CalculatorServiceGrpc.CalculatorServi
             while (number > 1) {
                 if (number % factor == 0) {
                     number = number / factor;
-                    PrimeNumberDecompositionResponse response =
-                            PrimeNumberDecompositionResponse.newBuilder()
-                                    .setPrimeFactor(factor)
-                                    .build();
+                    PrimeNumberDecompositionResponse response = PrimeNumberDecompositionResponse.newBuilder()
+                            .setPrimeFactor(factor)
+                            .build();
                     responseObserver.onNext(response);
                     Thread.sleep(1000L);
                 } else {
@@ -68,8 +68,7 @@ public class CalculatorServiceImpl extends CalculatorServiceGrpc.CalculatorServi
     }
 
     @Override
-    public StreamObserver<FindMaximumRequest> findMaximum(
-            StreamObserver<FindMaximumResponse> responseObserver) {
+    public StreamObserver<FindMaximumRequest> findMaximum(StreamObserver<FindMaximumResponse> responseObserver) {
         return new StreamObserver<>() {
             int maximum = Integer.MIN_VALUE;
 
@@ -95,8 +94,7 @@ public class CalculatorServiceImpl extends CalculatorServiceGrpc.CalculatorServi
     }
 
     @Override
-    public void squareRoot(
-            SquareRootRequest request, StreamObserver<SquareRootResponse> responseObserver) {
+    public void squareRoot(SquareRootRequest request, StreamObserver<SquareRootResponse> responseObserver) {
         int number = request.getNumber();
         if (number >= 0) {
             double numberRoot = Math.sqrt(number);
@@ -104,11 +102,10 @@ public class CalculatorServiceImpl extends CalculatorServiceGrpc.CalculatorServi
                     SquareRootResponse.newBuilder().setNumberRoot(numberRoot).build());
             responseObserver.onCompleted();
         } else {
-            responseObserver.onError(
-                    Status.INVALID_ARGUMENT
-                            .withDescription("The number being sent is not positive")
-                            .augmentDescription("Number sent: " + number)
-                            .asRuntimeException());
+            responseObserver.onError(Status.INVALID_ARGUMENT
+                    .withDescription("The number being sent is not positive")
+                    .augmentDescription("Number sent: " + number)
+                    .asRuntimeException());
         }
     }
 }

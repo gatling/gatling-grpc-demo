@@ -43,13 +43,13 @@ protobuf {
 
 spotless {
   java {
-    googleJavaFormat().aosp()
-    //importOrder = Seq("java", "javax", "scala", "io.gatling", "", "\\#")
-    //importOrder('java|javax', 'com.acme', '', '\\#com.acme', '\\#')
+    palantirJavaFormat()
+    importOrder("java|javax", "scala", "io.gatling", "", "\\#")
     removeUnusedImports()
     target project.fileTree(project.rootDir) {
       include '**/*.java'
       exclude 'build/generated/**/*.*'
     }
+    trimTrailingWhitespace()
   }
 }
