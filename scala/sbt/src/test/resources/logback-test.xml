@@ -20,7 +20,7 @@
 
   <!-- uncomment and set to DEBUG to log all failing gRPC requests -->
   <!-- uncomment and set to TRACE to log all gRPC requests -->
-  <!-- <logger name="io.gatling.grpc" level="TRACE" />-->
+  <!--<logger name="io.gatling.grpc.engine.response" level="TRACE" />-->
 
   <root level="WARN">
     <appender-ref ref="CONSOLE" />
