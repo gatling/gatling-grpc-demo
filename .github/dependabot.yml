@@ -4,6 +4,10 @@ updates:
     directory: "server"
     commit-message:
       prefix: "chore"
+    groups:
+      grpc:
+        patterns:
+          - "io.grpc:*"
     schedule:
       interval: "weekly"
       day: "sunday"
