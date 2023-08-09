@@ -1,0 +1,22 @@
+version: 2
+updates:
+  - package-ecosystem: "gradle"
+    directory: "server"
+    commit-message:
+      prefix: "chore"
+    labels:
+      - "dependencies"
+      - "gradle"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+  - package-ecosystem: "maven"
+    directory: "java/maven"
+    commit-message:
+      prefix: "chore"
+    labels:
+      - "dependencies"
+      - "maven"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
