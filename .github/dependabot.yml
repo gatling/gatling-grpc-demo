@@ -4,9 +4,6 @@ updates:
     directory: "server"
     commit-message:
       prefix: "chore"
-    labels:
-      - "dependencies"
-      - "gradle"
     schedule:
       interval: "weekly"
       day: "sunday"
@@ -14,9 +11,6 @@ updates:
     directory: "java/maven"
     commit-message:
       prefix: "chore"
-    labels:
-      - "dependencies"
-      - "maven"
     schedule:
       interval: "weekly"
       day: "sunday"
