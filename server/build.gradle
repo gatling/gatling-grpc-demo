@@ -15,7 +15,6 @@ dependencies {
   implementation 'io.grpc:grpc-netty-shaded:1.57.1' // shaded: includes ssl libraries
   implementation 'io.grpc:grpc-protobuf:1.57.1'
   implementation 'io.grpc:grpc-services:1.57.1' // reflection
-  implementation 'io.grpc:grpc-stub:1.57.1'
 }
 
 idea {
