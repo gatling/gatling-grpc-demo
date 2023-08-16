@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package greeting;
 
-
 import "scalapb/scalapb.proto";
 option (scalapb.options) = {
   flat_package: true
