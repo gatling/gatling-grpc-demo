@@ -1,7 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: "gradle"
-    directory: "server"
+    directory: "/server"
     commit-message:
       prefix: "chore"
     groups:
@@ -12,7 +12,7 @@ updates:
       interval: "weekly"
       day: "sunday"
   - package-ecosystem: "maven"
-    directory: "java/maven"
+    directory: "/java/maven"
     commit-message:
       prefix: "chore"
     schedule:

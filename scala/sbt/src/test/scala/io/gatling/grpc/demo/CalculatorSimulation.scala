@@ -1,4 +1,4 @@
-package io.gatling.grpc
+package io.gatling.grpc.demo
 
 import java.util.concurrent.ThreadLocalRandom
 
@@ -127,7 +127,7 @@ class CalculatorSimulation extends Simulation {
         )
     )
 
-  // Gatling / testOnly io.gatling.grpc.CalculatorSimulation
+  // Gatling / testOnly io.gatling.grpc.demo.CalculatorSimulation
   // eval sys.props("grpc.scenario") = "unary"
   // eval sys.props("grpc.scenario") = "serverStreaming"
   // eval sys.props("grpc.scenario") = "clientStreaming"

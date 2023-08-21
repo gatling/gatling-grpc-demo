@@ -1,12 +1,13 @@
-package io.gatling.grpc
+package io.gatling.grpc.demo
+
+import scala.concurrent.duration._
 
 import io.gatling.core.Predef._
 import io.gatling.core.session.Expression
 import io.gatling.grpc.Predef._
 import io.gatling.grpc.demo.greeting._
-import io.grpc.{ CallOptions, Status }
 
-import scala.concurrent.duration._
+import io.grpc.{CallOptions, Status}
 
 class GreetingSimulation extends Simulation {
 

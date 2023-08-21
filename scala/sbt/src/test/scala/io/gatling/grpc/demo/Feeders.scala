@@ -1,4 +1,4 @@
-package io.gatling.grpc
+package io.gatling.grpc.demo
 
 import java.util.concurrent.ThreadLocalRandom
 
