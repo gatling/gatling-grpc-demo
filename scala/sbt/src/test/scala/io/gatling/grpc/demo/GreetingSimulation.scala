@@ -52,7 +52,7 @@ class GreetingSimulation extends Simulation {
         .check(statusCode.is(Status.Code.DEADLINE_EXCEEDED))
     )
 
-  // Gatling / testOnly io.gatling.grpc.GreetSimulation
+  // Gatling / testOnly io.gatling.grpc.demo.GreetingSimulation
   // eval sys.props("grpc.scenario") = "unary"
   // eval sys.props("grpc.scenario") = "deadlines"
 
