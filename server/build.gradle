@@ -53,3 +53,12 @@ spotless {
     trimTrailingWhitespace()
   }
 }
+
+ext {
+  //javaMainClass = "io.gatling.grpc.demo.server.calculator.CalculatorServer"
+  javaMainClass = "io.gatling.grpc.demo.server.greeting.GreetingServer"
+}
+
+application {
+  mainClassName = javaMainClass
+}
