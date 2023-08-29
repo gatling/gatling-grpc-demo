@@ -11,6 +11,6 @@ public class Configuration {
     }
 
     public static GrpcProtocolBuilder baseGrpcProtocol(String host, int port) {
-        return grpc.forAddress(host, port).useCustomCertificateTrustManager("ssl/ca.crt");
+        return grpc.forAddress(host, port).useInsecureTrustManager();
     }
 }
