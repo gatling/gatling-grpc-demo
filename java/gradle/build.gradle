@@ -1,0 +1,73 @@
+plugins {
+  id 'application'
+  id 'idea'
+  id 'java'
+  id 'com.google.protobuf'   version '0.9.4'
+  id 'com.diffplug.spotless' version '6.20.0'
+  id 'io.gatling.gradle'     version '3.9.5.5'
+}
+
+repositories {
+  mavenCentral()
+  mavenLocal()
+}
+
+dependencies {
+  gatlingImplementation 'io.gatling:gatling-grpc-java:0.1.0-SNAPSHOT'
+}
+
+gatling {
+  gatlingVersion = '3.9.5'
+  // WARNING: options below only work when logback config file isn't provided
+  logLevel = 'WARN' // logback root level
+  logHttp = 'NONE' // set to 'ALL' for all HTTP traffic in TRACE, 'FAILURES' for failed HTTP traffic in DEBUG
+  enterprise {
+    // Enterprise Cloud (https://cloud.gatling.io/) configuration reference: https://gatling.io/docs/gatling/reference/current/extensions/gradle_plugin/#working-with-gatling-enterprise-cloud
+    // Enterprise Self-Hosted configuration reference: https://gatling.io/docs/gatling/reference/current/extensions/gradle_plugin/#working-with-gatling-enterprise-self-hosted
+  }
+}
+
+idea {
+  module {
+    sourceDirs += file("${protobuf.generatedFilesBaseDir}/gatling/java")
+    sourceDirs += file("${protobuf.generatedFilesBaseDir}/gatling/grpc")
+  }
+}
+
+sourceSets {
+  gatling {
+    java {
+      srcDirs += file("${protobuf.generatedFilesBaseDir}/gatling/java")
+      srcDirs += file("${protobuf.generatedFilesBaseDir}/gatling/grpc")
+    }
+  }
+}
+
+protobuf {
+  protoc {
+    artifact = 'com.google.protobuf:protoc:3.24.2'
+  }
+  plugins {
+    grpc {
+      artifact = 'io.grpc:protoc-gen-grpc-java:1.57.2'
+    }
+  }
+  generateProtoTasks {
+    all()*.plugins {
+      grpc {}
+    }
+  }
+}
+
+spotless {
+  java {
+    palantirJavaFormat()
+    importOrder('java|javax', 'scala', 'io.gatling', '', '\\#')
+    removeUnusedImports()
+    target project.fileTree(project.rootDir) {
+      include '**/*.java'
+      exclude 'build/generated/**/*.*'
+    }
+    trimTrailingWhitespace()
+  }
+}

@@ -1,13 +1,9 @@
 version: 2
 updates:
   - package-ecosystem: "gradle"
-    directory: "/server"
+    directory: "/java/gradle"
     commit-message:
       prefix: "chore"
-    groups:
-      grpc:
-        patterns:
-          - "io.grpc:*"
     schedule:
       interval: "weekly"
       day: "sunday"
@@ -15,6 +11,17 @@ updates:
     directory: "/java/maven"
     commit-message:
       prefix: "chore"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+  - package-ecosystem: "gradle"
+    directory: "/server"
+    commit-message:
+      prefix: "chore"
+    groups:
+      grpc:
+        patterns:
+          - "io.grpc:*"
     schedule:
       interval: "weekly"
       day: "sunday"

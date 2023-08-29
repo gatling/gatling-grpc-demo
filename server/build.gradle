@@ -20,14 +20,14 @@ dependencies {
 
 idea {
   module {
-    sourceDirs += file("${buildDir}/generated/source/proto/main/java");
-    sourceDirs += file("${buildDir}/generated/source/proto/main/grpc");
+    sourceDirs += file("${protobuf.generatedFilesBaseDir}/main/java")
+    sourceDirs += file("${protobuf.generatedFilesBaseDir}/main/grpc")
   }
 }
 
 protobuf {
   protoc {
-    artifact = "com.google.protobuf:protoc:3.24.2"
+    artifact = 'com.google.protobuf:protoc:3.24.2'
   }
   plugins {
     grpc {
@@ -44,7 +44,7 @@ protobuf {
 spotless {
   java {
     palantirJavaFormat()
-    importOrder("java|javax", "scala", "io.gatling", "", "\\#")
+    importOrder('java|javax', 'scala', 'io.gatling', '', '\\#')
     removeUnusedImports()
     target project.fileTree(project.rootDir) {
       include '**/*.java'
