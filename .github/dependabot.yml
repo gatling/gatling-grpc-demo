@@ -14,6 +14,13 @@ updates:
     schedule:
       interval: "weekly"
       day: "sunday"
+  - package-ecosystem: "maven"
+    directory: "/kotlin/maven"
+    commit-message:
+      prefix: "chore"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
   - package-ecosystem: "gradle"
     directory: "/server"
     commit-message:
