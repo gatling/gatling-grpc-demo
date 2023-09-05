@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.gatling.grpc.demo</groupId>
-    <artifactId>gatling-grpc-demo-maven-java</artifactId>
+    <artifactId>gatling-grpc-demo-maven-kotlin</artifactId>
     <version>0.1.0-SNAPSHOT</version>
 
     <properties>
@@ -17,9 +17,10 @@
         <gatling.version>3.9.5</gatling.version>
         <gatling-grpc.version>${project.version}</gatling-grpc.version>
         <gatling-maven-plugin.version>4.5.0</gatling-maven-plugin.version>
+        <kotlin.version>1.9.10</kotlin.version>
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
-        <protoc-jar-maven-plugin.version>3.11.4</protoc-jar-maven-plugin.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <protobuf.version>3.24.2</protobuf.version>
         <protobuf-maven-plugin.version>0.6.1</protobuf-maven-plugin.version>
         <protoc-gen-grpc-java.version>1.57.2</protoc-gen-grpc-java.version>
@@ -28,6 +29,16 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-kotlin</artifactId>
+            <version>${protobuf.version}</version>
+        </dependency>
         <dependency>
             <groupId>io.gatling.highcharts</groupId>
             <artifactId>gatling-charts-highcharts</artifactId>
@@ -43,6 +54,7 @@
     </dependencies>
 
     <build>
+        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
         <extensions>
             <extension>
                 <groupId>kr.motd.maven</groupId>
@@ -52,9 +64,33 @@
         </extensions>
         <plugins>
             <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -81,27 +117,24 @@
                             <goal>test-compile</goal>
                             <goal>test-compile-custom</goal>
                         </goals>
+                        <configuration>
+                            <pluginId>grpc-java</pluginId>
+                            <pluginArtifact>io.grpc:protoc-gen-grpc-java:${protoc-gen-grpc-java.version}:exe:${os.detected.classifier}</pluginArtifact>
+                            <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <pluginId>grpc-java</pluginId>
-                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:${protoc-gen-grpc-java.version}:exe:${os.detected.classifier}</pluginArtifact>
-                    <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
                 <version>${spotless.version}</version>
                 <configuration>
-                    <java>
-                        <palantirJavaFormat/>
-                        <importOrder>
-                            <order>java|javax,scala,io.gatling,,\#</order>
-                        </importOrder>
-                        <removeUnusedImports/>
-                        <toggleOffOn/>
-                    </java>
+                    <kotlin>
+                        <ktfmt>
+                            <style>GOOGLE</style>
+                        </ktfmt>
+                    </kotlin>
                 </configuration>
             </plugin>
         </plugins>
