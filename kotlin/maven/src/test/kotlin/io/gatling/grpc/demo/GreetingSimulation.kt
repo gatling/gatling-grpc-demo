@@ -23,17 +23,14 @@ class GreetingSimulation : Simulation() {
   private val unary =
     scenario("Greet Unary")
       .feed(randomNames())
-      .repeat(10)
-      .on(
-        exec(
-          grpc("Greet")
-            .unary(GreetingServiceGrpc.getGreetMethod())
-            .send { session -> GreetRequest.newBuilder().setGreeting(greeting(session)).build() }
-            .check(
-              statusCode().shouldBe(Status.Code.OK),
-              response(GreetResponse::getResult).isEL("Hello #{firstName} #{lastName}")
-            )
-        )
+      .exec(
+        grpc("Greet")
+          .unary(GreetingServiceGrpc.getGreetMethod())
+          .send { session -> GreetRequest.newBuilder().setGreeting(greeting(session)).build() }
+          .check(
+            statusCode().shouldBe(Status.Code.OK),
+            response(GreetResponse::getResult).isEL("Hello #{firstName} #{lastName}")
+          )
       )
 
   private val deadlines =

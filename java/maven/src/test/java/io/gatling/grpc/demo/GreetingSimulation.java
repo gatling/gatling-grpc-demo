@@ -28,15 +28,14 @@ public class GreetingSimulation extends Simulation {
 
     ScenarioBuilder unary = scenario("Greet Unary")
             .feed(Feeders.randomNames())
-            .repeat(10)
-            .on(exec(grpc("Greet")
+            .exec(grpc("Greet")
                     .unary(GreetingServiceGrpc.getGreetMethod())
                     .send(session -> GreetRequest.newBuilder()
                             .setGreeting(greeting.apply(session))
                             .build())
                     .check(
                             statusCode().is(Status.Code.OK),
-                            response(GreetResponse::getResult).isEL("Hello #{firstName} #{lastName}"))));
+                            response(GreetResponse::getResult).isEL("Hello #{firstName} #{lastName}")));
 
     ScenarioBuilder deadlines = scenario("Greet w/ Deadlines")
             .feed(Feeders.randomNames())
