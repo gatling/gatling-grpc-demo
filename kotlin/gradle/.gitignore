@@ -1,0 +1,6 @@
+.gradle/
+.idea/
+build/
+
+/src/main/resources/ssl/*
+!/src/main/resources/ssl/.gitkeep

@@ -1,6 +1,7 @@
 plugins {
-  id("idea")
-  id("java")
+  idea
+  kotlin("jvm")
+  kotlin("plugin.allopen")
 
   id("com.google.protobuf")   version "0.9.4"
   id("com.diffplug.spotless") version "6.21.0"
@@ -12,33 +13,32 @@ repositories {
 }
 
 dependencies {
+  gatlingApi("com.google.protobuf:protobuf-kotlin:3.24.2")
   gatlingImplementation("io.gatling:gatling-grpc-java:0.1.0-SNAPSHOT")
 }
 
 gatling {
-  enterprise {
+  enterprise.closureOf<Any> {
     // Enterprise Cloud (https://cloud.gatling.io/) configuration reference: https://gatling.io/docs/gatling/reference/current/extensions/gradle_plugin/#working-with-gatling-enterprise-cloud
     // Enterprise Self-Hosted configuration reference: https://gatling.io/docs/gatling/reference/current/extensions/gradle_plugin/#working-with-gatling-enterprise-self-hosted
   }
 }
 
-var generatedSources = [
+var generatedSources = arrayOf(
   file("${protobuf.generatedFilesBaseDir}/gatling/java"),
+  file("${protobuf.generatedFilesBaseDir}/gatling/kotlin"),
   file("${protobuf.generatedFilesBaseDir}/gatling/grpc")
-]
+)
 
 idea {
   module {
-    generatedSources.forEach { generatedSourceDirs += it }
+    generatedSourceDirs.plusAssign(generatedSources)
   }
 }
 
-sourceSets {
-  gatling {
-    java {
-      generatedSources.forEach { srcDirs += it }
-    }
-  }
+sourceSets.getByName("gatling") {
+  java.srcDirs(generatedSources)
+  kotlin.srcDirs(generatedSources)
 }
 
 protobuf {
@@ -46,30 +46,28 @@ protobuf {
     artifact = "com.google.protobuf:protoc:3.24.2"
   }
   plugins {
-    grpc {
+    create("grpc") {
       artifact = "io.grpc:protoc-gen-grpc-java:1.57.2"
     }
   }
   generateProtoTasks {
     ofSourceSet("gatling").forEach { task ->
       // A plugin somewhere doesn't handle task dependencies correctly on custom source sets
-      compileGatlingJava.dependsOn(task)
+      tasks.getByName("compileGatlingKotlin").dependsOn(task)
+      task.builtins {
+        maybeCreate("java") // Used by kotlin and already defined by default
+        create("kotlin")
+      }
       task.plugins {
-        grpc {}
+        create("grpc")
       }
     }
   }
 }
 
 spotless {
-  java {
-    palantirJavaFormat()
-    importOrder("java|javax", "scala", "io.gatling", "", "\\#")
-    removeUnusedImports()
-    target project.fileTree(project.rootDir) {
-      include "**/*.java"
-      exclude "build/generated/**/*.*"
-    }
-    trimTrailingWhitespace()
+  kotlin {
+    ktfmt()
+      .googleStyle()
   }
 }
