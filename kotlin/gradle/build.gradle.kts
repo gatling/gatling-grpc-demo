@@ -4,7 +4,7 @@ plugins {
   kotlin("plugin.allopen")
 
   id("com.google.protobuf")   version "0.9.4"
-  id("com.diffplug.spotless") version "6.22.0"
+  id("com.diffplug.spotless") version "6.23.2"
   id("io.gatling.gradle")     version "3.9.5.6"
 }
 
