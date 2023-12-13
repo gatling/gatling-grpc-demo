@@ -35,7 +35,7 @@ class CalculatorSimulation : Simulation() {
       .check(
         statusCode().shouldBe(Status.Code.OK),
         response(PrimeNumberDecompositionResponse::getPrimeFactor)
-          .transform { p: Any -> p == 2L || p == 5L || p == 17L || p == 97L || p == 6669961L }
+          .transform { p -> p == 2L || p == 5L || p == 17L || p == 97L || p == 6669961L }
           .shouldBe(true)
       )
 
@@ -66,7 +66,7 @@ class CalculatorSimulation : Simulation() {
       )
       .exec(clientStream.halfClose())
       .exec(clientStream.awaitStreamEnd())
-      .exec { session: Session ->
+      .exec { session ->
         val average = session.getDouble("average")
         println("average: $average")
         session
