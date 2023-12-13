@@ -18,6 +18,10 @@ updates:
     directory: "/kotlin/gradle"
     commit-message:
       prefix: "chore"
+    groups:
+      grpc:
+        patterns:
+          - "org.jetbrains.kotlin.*"
     schedule:
       interval: "weekly"
       day: "sunday"
