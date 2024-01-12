@@ -41,14 +41,11 @@ class CalculatorSimulation extends Simulation {
 
   private val serverStreaming = scenario("Calculator Server Streaming")
     .exec(
-      serverStream
-        .send(
-          PrimeNumberDecompositionRequest(
-            number = 109987656890L
-          )
-        )
+      serverStream.send(
+        PrimeNumberDecompositionRequest(number = 109987656890L)
+      ),
+      serverStream.awaitStreamEnd
     )
-    .exec(serverStream.awaitStreamEnd)
 
   private val clientStream = grpc("Compute Average")
     .clientStream(CalculatorServiceGrpc.METHOD_COMPUTE_AVERAGE) // will end up as session attribute, giving it a name is not useful?
@@ -59,26 +56,28 @@ class CalculatorSimulation extends Simulation {
     )
 
   private val clientStreaming = scenario("Calculator Client Streaming")
-    .exec(clientStream.start)
-    .repeat(10) {
-      pause(100.milliseconds, 200.milliseconds)
-        .exec(clientStream.send { _ =>
-          val number = ThreadLocalRandom.current.nextInt(0, 1000)
-          ComputeAverageRequest(
-            number = number
-          )
-        })
-    }
-    .exec(clientStream.halfClose)
-    .exec(clientStream.awaitStreamEnd)
-    .exec { session =>
-      for {
-        average <- session("average").validate[Double]
-      } yield {
-        println(s"average: $average")
-        session
+    .exec(
+      clientStream.start,
+      repeat(10) {
+        pause(100.milliseconds, 200.milliseconds)
+          .exec(clientStream.send { _ =>
+            val number = ThreadLocalRandom.current.nextInt(0, 1000)
+            ComputeAverageRequest(
+              number = number
+            )
+          })
+      },
+      clientStream.halfClose,
+      clientStream.awaitStreamEnd,
+      exec { session =>
+        for {
+          average <- session("average").validate[Double]
+        } yield {
+          println(s"average: $average")
+          session
+        }
       }
-    }
+    )
 
   private val bidirectionalStream = grpc("Find Maximum")
     .bidiStream(CalculatorServiceGrpc.METHOD_FIND_MAXIMUM)
@@ -89,29 +88,31 @@ class CalculatorSimulation extends Simulation {
     )
 
   private val bidirectionalStreaming = scenario("Calculator Bidirectional Streaming")
-    .exec(bidirectionalStream.start)
-    .repeat(10) {
-      exec(bidirectionalStream.send { _ =>
-        val number = ThreadLocalRandom.current.nextInt(0, 1000)
-        FindMaximumRequest(
-          number = number
-        )
-      })
-    }
-    .exec(bidirectionalStream.halfClose)
-    .exec(bidirectionalStream.awaitStreamEnd { (main, forked) =>
-      for {
-        maximum <- forked("maximum").validate[Int]
-      } yield main.set("maximum", maximum)
-    })
-    .exec { session =>
-      for {
-        maximum <- session("maximum").validate[Int]
-      } yield {
-        println(s"maximum: $maximum")
-        session
+    .exec(
+      bidirectionalStream.start,
+      repeat(10) {
+        exec(bidirectionalStream.send { _ =>
+          val number = ThreadLocalRandom.current.nextInt(0, 1000)
+          FindMaximumRequest(
+            number = number
+          )
+        })
+      },
+      bidirectionalStream.halfClose,
+      bidirectionalStream.awaitStreamEnd { (main, forked) =>
+        for {
+          maximum <- forked("maximum").validate[Int]
+        } yield main.set("maximum", maximum)
+      },
+      exec { session =>
+        for {
+          maximum <- session("maximum").validate[Int]
+        } yield {
+          println(s"maximum: $maximum")
+          session
+        }
       }
-    }
+    )
 
   private val deadlines = scenario("Calculator w/ Deadlines")
     .exec(

@@ -39,9 +39,9 @@ class CalculatorSimulation : Simulation() {
       .exec(
         serverStream.send(
           PrimeNumberDecompositionRequest.newBuilder().setNumber(109987656890L).build()
-        )
+        ),
+        serverStream.awaitStreamEnd()
       )
-      .exec(serverStream.awaitStreamEnd())
 
   private val clientStream =
     grpc("Compute Average")
@@ -53,23 +53,23 @@ class CalculatorSimulation : Simulation() {
 
   private val clientStreaming =
     scenario("Calculator Client Streaming")
-      .exec(clientStream.start())
-      .repeat(10)
-      .on(
-        exec(
-          clientStream.send { _ ->
-            val number = ThreadLocalRandom.current().nextInt(0, 1000)
-            ComputeAverageRequest.newBuilder().setNumber(number).build()
-          }
-        )
+      .exec(
+        clientStream.start(),
+        repeat(10)
+          .on(
+            clientStream.send { _ ->
+              val number = ThreadLocalRandom.current().nextInt(0, 1000)
+              ComputeAverageRequest.newBuilder().setNumber(number).build()
+            }
+          ),
+        clientStream.halfClose(),
+        clientStream.awaitStreamEnd(),
+        exec { session: Session ->
+          val average = session.getDouble("average")
+          println("average: $average")
+          session
+        }
       )
-      .exec(clientStream.halfClose())
-      .exec(clientStream.awaitStreamEnd())
-      .exec { session: Session ->
-        val average = session.getDouble("average")
-        println("average: $average")
-        session
-      }
 
   private val bidirectionalStream =
     grpc("Find Maximum")
@@ -81,27 +81,25 @@ class CalculatorSimulation : Simulation() {
 
   private val bidirectionalStreaming =
     scenario("Calculator Bidirectional Streaming")
-      .exec(bidirectionalStream.start())
-      .repeat(10)
-      .on(
-        exec(
-          bidirectionalStream.send { _ ->
-            val number = ThreadLocalRandom.current().nextInt(0, 1000)
-            FindMaximumRequest.newBuilder().setNumber(number).build()
-          }
-        )
-      )
       .exec(
+        bidirectionalStream.start(),
+        repeat(10)
+          .on(
+            bidirectionalStream.send { _ ->
+              val number = ThreadLocalRandom.current().nextInt(0, 1000)
+              FindMaximumRequest.newBuilder().setNumber(number).build()
+            }
+          ),
         bidirectionalStream.awaitStreamEnd { main, forked ->
           val latestMaximum = forked.getInt("maximum")
           main.set("maximum", latestMaximum)
+        },
+        exec { session ->
+          val maximum = session.getInt("maximum")
+          println("maximum: $maximum")
+          session
         }
       )
-      .exec { session ->
-        val maximum = session.getInt("maximum")
-        println("maximum: $maximum")
-        session
-      }
 
   private val deadlines =
     scenario("Calculator w/ Deadlines")

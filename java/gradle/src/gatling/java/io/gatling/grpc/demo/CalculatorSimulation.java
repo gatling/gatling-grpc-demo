@@ -40,10 +40,11 @@ public class CalculatorSimulation extends Simulation {
                                     .is(true));
 
     ScenarioBuilder serverStreaming = scenario("Calculator Server Streaming")
-            .exec(serverStream.send(PrimeNumberDecompositionRequest.newBuilder()
-                    .setNumber(109987656890L)
-                    .build()))
-            .exec(serverStream.awaitStreamEnd());
+            .exec(
+                    serverStream.send(PrimeNumberDecompositionRequest.newBuilder()
+                            .setNumber(109987656890L)
+                            .build()),
+                    serverStream.awaitStreamEnd());
 
     GrpcClientStreamingServiceBuilder<ComputeAverageRequest, ComputeAverageResponse> clientStream =
             grpc("Compute Average")
@@ -53,19 +54,21 @@ public class CalculatorSimulation extends Simulation {
                             response(ComputeAverageResponse::getAverage).saveAs("average"));
 
     ScenarioBuilder clientStreaming = scenario("Calculator Client Streaming")
-            .exec(clientStream.start())
-            .repeat(10)
-            .on(exec(clientStream.send(session -> {
-                int number = ThreadLocalRandom.current().nextInt(0, 1000);
-                return ComputeAverageRequest.newBuilder().setNumber(number).build();
-            })))
-            .exec(clientStream.halfClose())
-            .exec(clientStream.awaitStreamEnd())
-            .exec(session -> {
-                double average = session.getDouble("average");
-                System.out.println("average: " + average);
-                return session;
-            });
+            .exec(
+                    clientStream.start(),
+                    repeat(10).on(clientStream.send(session -> {
+                        int number = ThreadLocalRandom.current().nextInt(0, 1000);
+                        return ComputeAverageRequest.newBuilder()
+                                .setNumber(number)
+                                .build();
+                    })),
+                    clientStream.halfClose(),
+                    clientStream.awaitStreamEnd(),
+                    exec(session -> {
+                        double average = session.getDouble("average");
+                        System.out.println("average: " + average);
+                        return session;
+                    }));
 
     GrpcBidirectionalStreamingServiceBuilder<FindMaximumRequest, FindMaximumResponse> bidirectionalStream =
             grpc("Find Maximum")
@@ -75,21 +78,21 @@ public class CalculatorSimulation extends Simulation {
                             response(FindMaximumResponse::getMaximum).saveAs("maximum"));
 
     ScenarioBuilder bidirectionalStreaming = scenario("Calculator Bidirectional Streaming")
-            .exec(bidirectionalStream.start())
-            .repeat(10)
-            .on(exec(bidirectionalStream.send(session -> {
-                int number = ThreadLocalRandom.current().nextInt(0, 1000);
-                return FindMaximumRequest.newBuilder().setNumber(number).build();
-            })))
-            .exec(bidirectionalStream.awaitStreamEnd((main, forked) -> {
-                int latestMaximum = forked.getInt("maximum");
-                return main.set("maximum", latestMaximum);
-            }))
-            .exec(session -> {
-                int maximum = session.getInt("maximum");
-                System.out.println("maximum: " + maximum);
-                return session;
-            });
+            .exec(
+                    bidirectionalStream.start(),
+                    repeat(10).on(bidirectionalStream.send(session -> {
+                        int number = ThreadLocalRandom.current().nextInt(0, 1000);
+                        return FindMaximumRequest.newBuilder().setNumber(number).build();
+                    })),
+                    bidirectionalStream.awaitStreamEnd((main, forked) -> {
+                        int latestMaximum = forked.getInt("maximum");
+                        return main.set("maximum", latestMaximum);
+                    }),
+                    exec(session -> {
+                        int maximum = session.getInt("maximum");
+                        System.out.println("maximum: " + maximum);
+                        return session;
+                    }));
 
     ScenarioBuilder deadlines = scenario("Calculator w/ Deadlines")
             .exec(grpc("Square Root")
