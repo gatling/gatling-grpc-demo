@@ -63,7 +63,10 @@ class CalculatorSimulation : Simulation() {
             }
           ),
         clientStream.halfClose(),
-        clientStream.awaitStreamEnd(),
+        clientStream.awaitStreamEnd { main, forked ->
+          val average = forked.getDouble("average")
+          main.set("average", average)
+        },
         exec { session: Session ->
           val average = session.getDouble("average")
           println("average: $average")
@@ -90,6 +93,7 @@ class CalculatorSimulation : Simulation() {
               FindMaximumRequest.newBuilder().setNumber(number).build()
             }
           ),
+        bidirectionalStream.halfClose(),
         bidirectionalStream.awaitStreamEnd { main, forked ->
           val latestMaximum = forked.getInt("maximum")
           main.set("maximum", latestMaximum)
@@ -110,21 +114,13 @@ class CalculatorSimulation : Simulation() {
           .check(statusCode().shouldBe(Status.Code.INVALID_ARGUMENT))
       )
 
-  /* mvn gatling:test -Dgrpc.scenario=unary \
-       -Dgatling.simulationClass=io.gatling.grpc.demo.CalculatorSimulation
-  */
-  /* mvn gatling:test -Dgrpc.scenario=serverStreaming \
-       -Dgatling.simulationClass=io.gatling.grpc.demo.CalculatorSimulation
-  */
-  /* mvn gatling:test -Dgrpc.scenario=clientStreaming \
-       -Dgatling.simulationClass=io.gatling.grpc.demo.CalculatorSimulation
-  */
-  /* mvn gatling:test -Dgrpc.scenario=bidirectionalStreaming \
-       -Dgatling.simulationClass=io.gatling.grpc.demo.CalculatorSimulation
-  */
-  /* mvn gatling:test -Dgrpc.scenario=deadlines \
-       -Dgatling.simulationClass=io.gatling.grpc.demo.CalculatorSimulation
-  */
+  // spotless:off
+  // mvn gatling:test -Dgrpc.scenario=unary -Dgatling.simulationClass=io.gatling.grpc.demo.CalculatorSimulation
+  // mvn gatling:test -Dgrpc.scenario=serverStreaming -Dgatling.simulationClass=io.gatling.grpc.demo.CalculatorSimulation
+  // mvn gatling:test -Dgrpc.scenario=clientStreaming -Dgatling.simulationClass=io.gatling.grpc.demo.CalculatorSimulation
+  // mvn gatling:test -Dgrpc.scenario=bidirectionalStreaming -Dgatling.simulationClass=io.gatling.grpc.demo.CalculatorSimulation
+  // mvn gatling:test -Dgrpc.scenario=deadlines -Dgatling.simulationClass=io.gatling.grpc.demo.CalculatorSimulation
+  // spotless:on
 
   init {
     val name = System.getProperty("grpc.scenario")

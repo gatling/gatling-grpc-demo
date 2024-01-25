@@ -63,7 +63,10 @@ public class CalculatorSimulation extends Simulation {
                                 .build();
                     })),
                     clientStream.halfClose(),
-                    clientStream.awaitStreamEnd(),
+                    clientStream.awaitStreamEnd((main, forked) -> {
+                        double average = forked.getDouble("average");
+                        return main.set("average", average);
+                    }),
                     exec(session -> {
                         double average = session.getDouble("average");
                         System.out.println("average: " + average);
@@ -84,6 +87,7 @@ public class CalculatorSimulation extends Simulation {
                         int number = ThreadLocalRandom.current().nextInt(0, 1000);
                         return FindMaximumRequest.newBuilder().setNumber(number).build();
                     })),
+                    bidirectionalStream.halfClose(),
                     bidirectionalStream.awaitStreamEnd((main, forked) -> {
                         int latestMaximum = forked.getInt("maximum");
                         return main.set("maximum", latestMaximum);

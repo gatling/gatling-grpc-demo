@@ -52,9 +52,12 @@ class GreetingSimulation extends Simulation {
         .check(statusCode.is(Status.Code.DEADLINE_EXCEEDED))
     )
 
-  // Gatling / testOnly io.gatling.grpc.demo.GreetingSimulation
+  // In sbt interactive mode, use one of:
   // eval sys.props("grpc.scenario") = "unary"
   // eval sys.props("grpc.scenario") = "deadlines"
+
+  // Then:
+  // Gatling / testOnly io.gatling.grpc.demo.GreetingSimulation
 
   private val scn = sys.props.get("grpc.scenario") match {
     case Some("deadlines") => deadlines

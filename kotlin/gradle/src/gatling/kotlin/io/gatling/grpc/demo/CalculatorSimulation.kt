@@ -5,7 +5,9 @@ import io.gatling.javaapi.core.*
 import io.gatling.javaapi.core.CoreDsl.*
 import io.gatling.javaapi.grpc.*
 import io.gatling.javaapi.grpc.GrpcDsl.*
-import io.grpc.Status
+
+import io.grpc.*
+
 import java.util.concurrent.ThreadLocalRandom
 
 class CalculatorSimulation : Simulation() {
@@ -66,7 +68,10 @@ class CalculatorSimulation : Simulation() {
             }
           ),
         clientStream.halfClose(),
-        clientStream.awaitStreamEnd(),
+        clientStream.awaitStreamEnd { main, forked ->
+          val average = forked.getDouble("average")
+          main.set("average", average)
+        },
         exec { session ->
           val average = session.getDouble("average")
           println("average: $average")
@@ -92,6 +97,7 @@ class CalculatorSimulation : Simulation() {
               findMaximumRequest { number = ThreadLocalRandom.current().nextInt(0, 1000) }
             }
           ),
+        bidirectionalStream.halfClose(),
         bidirectionalStream.awaitStreamEnd { main, forked ->
           val latestMaximum = forked.getInt("maximum")
           main.set("maximum", latestMaximum)
@@ -112,12 +118,13 @@ class CalculatorSimulation : Simulation() {
           .check(statusCode().shouldBe(Status.Code.INVALID_ARGUMENT))
       )
 
+  // spotless:off
   // ./gradlew -Dgrpc.scenario=unary gatlingRun-io.gatling.grpc.demo.CalculatorSimulation
   // ./gradlew -Dgrpc.scenario=serverStreaming gatlingRun-io.gatling.grpc.demo.CalculatorSimulation
   // ./gradlew -Dgrpc.scenario=clientStreaming gatlingRun-io.gatling.grpc.demo.CalculatorSimulation
-  // ./gradlew -Dgrpc.scenario=bidirectionalStreaming
-  // gatlingRun-io.gatling.grpc.demo.CalculatorSimulation
+  // ./gradlew -Dgrpc.scenario=bidirectionalStreaming gatlingRun-io.gatling.grpc.demo.CalculatorSimulation
   // ./gradlew -Dgrpc.scenario=deadlines gatlingRun-io.gatling.grpc.demo.CalculatorSimulation
+  // spotless:on
 
   init {
     val name = System.getProperty("grpc.scenario")

@@ -68,7 +68,11 @@ class CalculatorSimulation extends Simulation {
           })
       },
       clientStream.halfClose,
-      clientStream.awaitStreamEnd,
+      clientStream.awaitStreamEnd { (main, forked) =>
+        for {
+          average <- forked("average").validate[Double]
+        } yield main.set("average", average)
+      },
       exec { session =>
         for {
           average <- session("average").validate[Double]
@@ -128,12 +132,15 @@ class CalculatorSimulation extends Simulation {
         )
     )
 
-  // Gatling / testOnly io.gatling.grpc.demo.CalculatorSimulation
+  // In sbt interactive mode, use one of:
   // eval sys.props("grpc.scenario") = "unary"
   // eval sys.props("grpc.scenario") = "serverStreaming"
   // eval sys.props("grpc.scenario") = "clientStreaming"
   // eval sys.props("grpc.scenario") = "bidirectionalStreaming"
   // eval sys.props("grpc.scenario") = "deadlines"
+
+  // Then:
+  // Gatling / testOnly io.gatling.grpc.demo.CalculatorSimulation
 
   private val scn = sys.props.get("grpc.scenario") match {
     case Some("serverStreaming")        => serverStreaming
