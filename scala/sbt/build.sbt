@@ -11,7 +11,7 @@ scalacOptions := Seq(
 Protobuf.scalaSettings
 
 val gatlingVersion = "3.10.3"
-val gatlingGrpcVersion = "0.1.0-SNAPSHOT"
+val gatlingGrpcVersion = gatlingVersion
 
 libraryDependencies += "io.gatling.highcharts" % "gatling-charts-highcharts" % gatlingVersion     % "test,it"
 libraryDependencies += "io.gatling"            % "gatling-grpc"              % gatlingGrpcVersion % "test,it"

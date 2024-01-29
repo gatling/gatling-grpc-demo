@@ -5,7 +5,7 @@
 
     <groupId>io.gatling.grpc.demo</groupId>
     <artifactId>gatling-grpc-demo-maven-kotlin</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>3.10.3</version>
 
     <properties>
         <!-- use the following if you're compiling with JDK 8-->
@@ -14,7 +14,7 @@
         <!-- comment the 2 lines above and uncomment the line bellow if you're compiling with JDK 11 or 17 -->
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <gatling.version>3.10.3</gatling.version>
+        <gatling.version>${project.version}</gatling.version>
         <gatling-grpc.version>${project.version}</gatling-grpc.version>
         <gatling-maven-plugin.version>4.7.0</gatling-maven-plugin.version>
         <kotlin.version>1.9.22</kotlin.version>
