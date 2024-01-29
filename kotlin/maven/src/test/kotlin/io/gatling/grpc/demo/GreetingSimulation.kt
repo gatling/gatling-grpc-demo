@@ -1,14 +1,17 @@
 package io.gatling.grpc.demo
 
+import java.util.concurrent.TimeUnit
+
 import io.gatling.grpc.demo.Feeders.randomNames
 import io.gatling.grpc.demo.greeting.*
 import io.gatling.javaapi.core.CoreDsl.*
 import io.gatling.javaapi.core.Session
 import io.gatling.javaapi.core.Simulation
 import io.gatling.javaapi.grpc.GrpcDsl.*
+
 import io.grpc.CallOptions
 import io.grpc.Status
-import java.util.concurrent.TimeUnit
+
 
 class GreetingSimulation : Simulation() {
 

@@ -1,12 +1,14 @@
 package io.gatling.grpc.demo
 
+import java.util.concurrent.ThreadLocalRandom
+
 import io.gatling.grpc.demo.calculator.*
 import io.gatling.javaapi.core.*
 import io.gatling.javaapi.core.CoreDsl.*
 import io.gatling.javaapi.grpc.*
 import io.gatling.javaapi.grpc.GrpcDsl.*
+
 import io.grpc.Status
-import java.util.concurrent.ThreadLocalRandom
 
 class CalculatorSimulation : Simulation() {
 
