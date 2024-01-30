@@ -5,5 +5,7 @@ target/
 
 *.iml
 
+.mvn/wrapper/*.jar
+
 /src/test/resources/ssl/*
 !/src/test/resources/ssl/.gitkeep
