@@ -1,6 +1,6 @@
 package io.gatling.grpc.demo
 
-import java.util.concurrent.TimeUnit
+import java.time.Duration
 
 import io.gatling.grpc.demo.Feeders.randomNames
 import io.gatling.grpc.demo.greeting.*
@@ -9,7 +9,6 @@ import io.gatling.javaapi.core.Session
 import io.gatling.javaapi.core.Simulation
 import io.gatling.javaapi.grpc.GrpcDsl.*
 
-import io.grpc.CallOptions
 import io.grpc.Status
 
 class GreetingSimulation : Simulation() {
@@ -45,7 +44,7 @@ class GreetingSimulation : Simulation() {
         grpc("Greet w/ Deadlines")
           .unary(GreetingServiceGrpc.getGreetWithDeadlineMethod())
           .send(greetRequest)
-          .callOptions(CallOptions.DEFAULT.withDeadlineAfter(100, TimeUnit.MILLISECONDS))
+          .deadlineAfter(Duration.ofMillis(100))
           .check(statusCode().shouldBe(Status.Code.DEADLINE_EXCEEDED))
       )
 

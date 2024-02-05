@@ -1,13 +1,12 @@
 package io.gatling.grpc.demo;
 
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 import java.util.function.Function;
 
 import io.gatling.grpc.demo.greeting.*;
 import io.gatling.javaapi.core.*;
 import io.gatling.javaapi.grpc.*;
 
-import io.grpc.CallOptions;
 import io.grpc.Status;
 
 import static io.gatling.javaapi.core.CoreDsl.*;
@@ -44,7 +43,7 @@ public class GreetingSimulation extends Simulation {
                     .send(session -> GreetRequest.newBuilder()
                             .setGreeting(greeting.apply(session))
                             .build())
-                    .callOptions(CallOptions.DEFAULT.withDeadlineAfter(100, TimeUnit.MILLISECONDS))
+                    .deadlineAfter(Duration.ofMillis(100))
                     .check(statusCode().is(Status.Code.DEADLINE_EXCEEDED)));
 
     // ./mvnw gatling:test -Dgrpc.scenario=unary -Dgatling.simulationClass=io.gatling.grpc.demo.GreetingSimulation
