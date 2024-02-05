@@ -7,7 +7,7 @@ import io.gatling.core.session.Expression
 import io.gatling.grpc.Predef._
 import io.gatling.grpc.demo.greeting._
 
-import io.grpc.{CallOptions, Status}
+import io.grpc.Status
 
 class GreetingSimulation extends Simulation {
 
@@ -48,7 +48,7 @@ class GreetingSimulation extends Simulation {
             greeting <- greeting(session)
           } yield GreetRequest(greeting = Some(greeting))
         }
-        .callOptions(CallOptions.DEFAULT.withDeadlineAfter(100, MILLISECONDS))
+        .deadlineAfter(100.milliseconds)
         .check(statusCode.is(Status.Code.DEADLINE_EXCEEDED))
     )
 
