@@ -5,7 +5,7 @@
 
     <groupId>io.gatling.grpc.demo</groupId>
     <artifactId>gatling-grpc-demo-maven-kotlin</artifactId>
-    <version>3.10.3</version>
+    <version>3.10.4</version>
 
     <properties>
         <!-- use the following if you're compiling with JDK 8-->
