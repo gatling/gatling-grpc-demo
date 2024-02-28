@@ -27,7 +27,7 @@ It will run the service on the port `50051`.
 To run the Calculator demo server:
 
 ```console
-./gradlew -PmainClass=io.gatling.grpc.demo.server.calculator.CalculatorServer run 
+./gradlew -PmainClass=io.gatling.grpc.demo.server.calculator.CalculatorServer run
 ```
 
 It will run the service on the port `50052`.

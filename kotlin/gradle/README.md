@@ -21,7 +21,7 @@ The system property `grpc.scenario` can take the following values:
 To run the Greeting simulation, use the `gatlingRun` Gradle task:
 
 ```console
-./gradlew -Dgrpc.scenario=unary gatlingRun-io.gatling.grpc.demo.GreetingSimulation  
+./gradlew -Dgrpc.scenario=unary gatlingRun-io.gatling.grpc.demo.GreetingSimulation
 ```
 
 ### Calculator simulation
@@ -37,5 +37,5 @@ The system property `grpc.scenario` can take the following values:
 To run the Calculator simulation, use the `gatlingRun` Gradle task:
 
 ```console
-./gradlew -Dgrpc.scenario=unary gatlingRun-io.gatling.grpc.demo.CalculatorSimulation  
+./gradlew -Dgrpc.scenario=unary gatlingRun-io.gatling.grpc.demo.CalculatorSimulation
 ```
