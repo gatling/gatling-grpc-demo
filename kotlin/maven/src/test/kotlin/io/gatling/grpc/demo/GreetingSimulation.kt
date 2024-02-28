@@ -47,12 +47,10 @@ class GreetingSimulation : Simulation() {
           .check(statusCode().shouldBe(Status.Code.DEADLINE_EXCEEDED))
       )
 
-  /* mvn gatling:test -Dgrpc.scenario=unary \
-       -Dgatling.simulationClass=io.gatling.grpc.demo.GreetingSimulation
-  */
-  /* mvn gatling:test -Dgrpc.scenario=deadlines \
-       -Dgatling.simulationClass=io.gatling.grpc.demo.GreetingSimulation
-  */
+  // spotless:off
+  // ./mvnw gatling:test -Dgrpc.scenario=unary -Dgatling.simulationClass=io.gatling.grpc.demo.GreetingSimulation
+  // ./mvnw gatling:test -Dgrpc.scenario=deadlines -Dgatling.simulationClass=io.gatling.grpc.demo.GreetingSimulation
+  // spotless:on
 
   init {
     val name = System.getProperty("grpc.scenario")

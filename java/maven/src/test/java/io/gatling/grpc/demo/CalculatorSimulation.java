@@ -105,11 +105,11 @@ public class CalculatorSimulation extends Simulation {
                     .check(statusCode().is(Status.Code.INVALID_ARGUMENT)));
 
     // spotless:off
-    // mvn gatling:test -Dgrpc.scenario=unary -Dgatling.simulationClass=io.gatling.grpc.demo.CalculatorSimulation
-    // mvn gatling:test -Dgrpc.scenario=serverStreaming -Dgatling.simulationClass=io.gatling.grpc.demo.CalculatorSimulation
-    // mvn gatling:test -Dgrpc.scenario=clientStreaming -Dgatling.simulationClass=io.gatling.grpc.demo.CalculatorSimulation
-    // mvn gatling:test -Dgrpc.scenario=bidirectionalStreaming -Dgatling.simulationClass=io.gatling.grpc.demo.CalculatorSimulation
-    // mvn gatling:test -Dgrpc.scenario=deadlines -Dgatling.simulationClass=io.gatling.grpc.demo.CalculatorSimulation
+    // ./mvnw gatling:test -Dgrpc.scenario=unary -Dgatling.simulationClass=io.gatling.grpc.demo.CalculatorSimulation
+    // ./mvnw gatling:test -Dgrpc.scenario=serverStreaming -Dgatling.simulationClass=io.gatling.grpc.demo.CalculatorSimulation
+    // ./mvnw gatling:test -Dgrpc.scenario=clientStreaming -Dgatling.simulationClass=io.gatling.grpc.demo.CalculatorSimulation
+    // ./mvnw gatling:test -Dgrpc.scenario=bidirectionalStreaming -Dgatling.simulationClass=io.gatling.grpc.demo.CalculatorSimulation
+    // ./mvnw gatling:test -Dgrpc.scenario=deadlines -Dgatling.simulationClass=io.gatling.grpc.demo.CalculatorSimulation
     // spotless:on
 
     {
