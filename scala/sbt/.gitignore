@@ -5,5 +5,5 @@ target/
 
 *.iml
 
-/src/test/resources/ssl/*
-!/src/test/resources/ssl/.gitkeep
+/src/test/resources/certs/*
+!/src/test/resources/certs/.gitkeep
