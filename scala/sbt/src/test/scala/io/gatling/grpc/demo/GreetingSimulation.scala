@@ -1,18 +1,32 @@
 package io.gatling.grpc.demo
 
 import scala.concurrent.duration._
-
 import io.gatling.core.Predef._
 import io.gatling.core.session.Expression
 import io.gatling.grpc.Predef._
 import io.gatling.grpc.demo.greeting._
+import io.grpc.{Status, TlsChannelCredentials}
 
-import io.grpc.{CallOptions, Status}
+import java.io.File
 
 class GreetingSimulation extends Simulation {
 
+  private val certsFolder = new File("/Users/guillaumegaly/Documents/Workspaces/grpc/gatling-grpc-demo/certs")
+  private val caCert = new File(certsFolder, "ca.pem")
+  private val clientCert = new File(certsFolder, "client.pem")
+  private val clientPrivateKey = new File(certsFolder, "client.key")
+
+  private val tlsChannelCredentials = TlsChannelCredentials
+    .newBuilder()
+    .trustManager(caCert)
+    .keyManager(clientCert, clientPrivateKey)
+    .build()
+
   private val baseGrpcProtocol =
     Configuration.baseGrpcProtocol("localhost", 50051)
+      .useStandardTrustManager
+      .overrideAuthority("foo.test.google.fr")
+      .channelCredentials(tlsChannelCredentials)
 
   private val greeting: Expression[Greeting] = { session =>
     for {
@@ -48,7 +62,7 @@ class GreetingSimulation extends Simulation {
             greeting <- greeting(session)
           } yield GreetRequest(greeting = Some(greeting))
         }
-        .callOptions(CallOptions.DEFAULT.withDeadlineAfter(100, MILLISECONDS))
+        .deadlineAfter(100, MILLISECONDS)
         .check(statusCode.is(Status.Code.DEADLINE_EXCEEDED))
     )
 

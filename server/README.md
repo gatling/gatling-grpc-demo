@@ -17,7 +17,7 @@ Running the task with no project property will run the Greeting server by defaul
 To run the Greeting demo server:
 
 ```console
-./gradlew -PmainClass=io.gatling.grpc.demo.server.calculator.GreetingServer run 
+./gradlew -PmainClass=io.gatling.grpc.demo.server.greeting.GreetingServer run 
 ```
 
 It will run the service on the port `50051`.

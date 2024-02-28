@@ -12,8 +12,13 @@ import io.grpc.Status
 
 class CalculatorSimulation extends Simulation {
 
+  private val host = sys.props.get("grpc.host").getOrElse("localhost")
+  private val port = sys.props.get("grpc.port").getOrElse("50052").toInt
+  private val users = sys.props.get("grpc.users").getOrElse("1").toInt
+  private val duration = sys.props.get("grpc.duration").getOrElse("30").toInt
+
   private val baseGrpcProtocol =
-    Configuration.baseGrpcProtocol("localhost", 50052)
+    Configuration.baseGrpcProtocol(host, port)
 
   private val unary = scenario("Calculator Unary")
     .exec(
@@ -44,7 +49,9 @@ class CalculatorSimulation extends Simulation {
       serverStream.send(
         PrimeNumberDecompositionRequest(number = 109987656890L)
       ),
-      serverStream.awaitStreamEnd
+      serverStream.awaitStreamEnd { (main, forked) =>
+        main.set("primeFactor", forked("primeFactor").as[Long])
+      }
     )
 
   private val clientStream = grpc("Compute Average")
@@ -90,6 +97,7 @@ class CalculatorSimulation extends Simulation {
       response((result: FindMaximumResponse) => result.maximum)
         .saveAs("maximum")
     )
+    .messageResponseTimePolicy(FromStreamStartPolicy)
 
   private val bidirectionalStreaming = scenario("Calculator Bidirectional Streaming")
     .exec(
@@ -151,6 +159,6 @@ class CalculatorSimulation extends Simulation {
   }
 
   setUp(
-    scn.inject(atOnceUsers(1))
+    scn.inject(constantUsersPerSec(users).during(duration))
   ).protocols(baseGrpcProtocol)
 }
