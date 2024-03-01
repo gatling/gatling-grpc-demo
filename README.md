@@ -11,3 +11,8 @@ This demo project contains all combination of currently supported languages and 
 A [demo server](https://github.com/gatling/gatling-grpc-demo/tree/main/server) is also available.
 
 Check each project for their usage details.
+
+## Certificates
+
+The script we used to generate all the certificates present in the demo projects can be found
+[here](https://github.com/gatling/gatling-grpc-demo/blob/main/certificates.sh).

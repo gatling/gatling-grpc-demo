@@ -4,6 +4,3 @@
 target/
 
 *.iml
-
-/src/test/resources/certs/*
-!/src/test/resources/certs/.gitkeep

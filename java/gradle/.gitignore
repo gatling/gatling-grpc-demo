@@ -1,6 +1,3 @@
 .gradle/
 .idea/
 build/
-
-/src/main/resources/certs/*
-!/src/main/resources/certs/.gitkeep

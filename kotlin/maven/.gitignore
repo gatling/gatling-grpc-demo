@@ -6,6 +6,3 @@ target/
 *.iml
 
 .mvn/wrapper/*.jar
-
-/src/test/resources/certs/*
-!/src/test/resources/certs/.gitkeep
