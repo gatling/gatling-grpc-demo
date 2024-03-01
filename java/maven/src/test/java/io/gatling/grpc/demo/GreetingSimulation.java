@@ -14,7 +14,7 @@ import static io.gatling.javaapi.grpc.GrpcDsl.*;
 
 public class GreetingSimulation extends Simulation {
 
-    GrpcProtocolBuilder baseGrpcProtocol = Configuration.baseGrpcProtocol("localhost", 50051);
+    GrpcProtocolBuilder baseGrpcProtocol = Configuration.baseGrpcProtocolWithMutualAuth("localhost", 50051);
 
     Function<Session, Greeting> greeting = session -> {
         String firstName = session.getString("firstName");
@@ -26,6 +26,7 @@ public class GreetingSimulation extends Simulation {
     };
 
     ScenarioBuilder unary = scenario("Greet Unary")
+            .feed(Feeders.channelCredentials().circular())
             .feed(Feeders.randomNames())
             .exec(grpc("Greet")
                     .unary(GreetingServiceGrpc.getGreetMethod())
@@ -37,6 +38,7 @@ public class GreetingSimulation extends Simulation {
                             response(GreetResponse::getResult).isEL("Hello #{firstName} #{lastName}")));
 
     ScenarioBuilder deadlines = scenario("Greet w/ Deadlines")
+            .feed(Feeders.channelCredentials().circular())
             .feed(Feeders.randomNames())
             .exec(grpc("Greet w/ Deadlines")
                     .unary(GreetingServiceGrpc.getGreetWithDeadlineMethod())
@@ -58,6 +60,6 @@ public class GreetingSimulation extends Simulation {
             scn = unary;
         }
 
-        setUp(scn.injectOpen(atOnceUsers(1))).protocols(baseGrpcProtocol);
+        setUp(scn.injectOpen(atOnceUsers(5))).protocols(baseGrpcProtocol);
     }
 }

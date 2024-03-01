@@ -12,7 +12,7 @@ import io.grpc.Status
 class GreetingSimulation extends Simulation {
 
   private val baseGrpcProtocol =
-    Configuration.baseGrpcProtocol("localhost", 50051)
+    Configuration.baseGrpcProtocolWithMutualAuth("localhost", 50051)
 
   private val greeting: Expression[Greeting] = { session =>
     for {
@@ -22,6 +22,7 @@ class GreetingSimulation extends Simulation {
   }
 
   private val unary = scenario("Greet Unary")
+    .feed(Feeders.channelCredentials.circular)
     .feed(Feeders.randomNames)
     .exec(
       grpc("Greet")
@@ -39,6 +40,7 @@ class GreetingSimulation extends Simulation {
     )
 
   private val deadlines = scenario("Greet w/ Deadlines")
+    .feed(Feeders.channelCredentials.circular)
     .feed(Feeders.randomNames)
     .exec(
       grpc("Greet w/ Deadlines")
@@ -65,6 +67,6 @@ class GreetingSimulation extends Simulation {
   }
 
   setUp(
-    scn.inject(atOnceUsers(1))
+    scn.inject(atOnceUsers(5))
   ).protocols(baseGrpcProtocol)
 }
