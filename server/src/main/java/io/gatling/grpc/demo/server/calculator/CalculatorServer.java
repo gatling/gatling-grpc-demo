@@ -1,6 +1,5 @@
 package io.gatling.grpc.demo.server.calculator;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 
@@ -11,12 +10,12 @@ public class CalculatorServer {
     public static void main(String[] args) throws CertificateException, IOException, InterruptedException {
         SelfSignedCertificate ssc = new SelfSignedCertificate("localhost");
         Server server = ServerBuilder.forPort(50052)
-                .addService(new CalculatorServiceImpl())
-                .useTransportSecurity(
-                        new FileInputStream(ssc.certificate()),
-                        new FileInputStream(ssc.privateKey())
-                )
-                .build();
+            .addService(new CalculatorServiceImpl())
+            .useTransportSecurity(
+                ssc.certificate(),
+                ssc.privateKey()
+            )
+            .build();
         server.start();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("Received shutdown request");

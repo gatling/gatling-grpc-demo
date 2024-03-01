@@ -2,7 +2,6 @@ package io.gatling.grpc.demo
 
 import java.time.Duration
 
-import io.gatling.grpc.demo.Feeders.randomNames
 import io.gatling.grpc.demo.greeting.*
 import io.gatling.javaapi.core.CoreDsl.*
 import io.gatling.javaapi.core.Session
@@ -13,7 +12,7 @@ import io.grpc.Status
 
 class GreetingSimulation : Simulation() {
 
-  private val baseGrpcProtocol = Configuration.baseGrpcProtocol("localhost", 50051)
+  private val baseGrpcProtocol = Configuration.baseGrpcProtocolWithMutualAuth("localhost", 50051)
 
   private val greetRequest = { session: Session ->
     greetRequest {
@@ -26,7 +25,8 @@ class GreetingSimulation : Simulation() {
 
   private val unary =
     scenario("Greet Unary")
-      .feed(randomNames())
+      .feed(Feeders.channelCredentials().circular())
+      .feed(Feeders.randomNames())
       .exec(
         grpc("Greet")
           .unary(GreetingServiceGrpc.getGreetMethod())
@@ -39,7 +39,8 @@ class GreetingSimulation : Simulation() {
 
   private val deadlines =
     scenario("Greet w/ Deadlines")
-      .feed(randomNames())
+      .feed(Feeders.channelCredentials().circular())
+      .feed(Feeders.randomNames())
       .exec(
         grpc("Greet w/ Deadlines")
           .unary(GreetingServiceGrpc.getGreetWithDeadlineMethod())

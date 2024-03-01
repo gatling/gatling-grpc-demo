@@ -3,18 +3,24 @@ package io.gatling.grpc.demo;
 import java.time.Duration;
 import java.util.function.Function;
 
-import io.gatling.grpc.demo.greeting.*;
-import io.gatling.javaapi.core.*;
-import io.gatling.javaapi.grpc.*;
+import io.gatling.grpc.demo.greeting.GreetRequest;
+import io.gatling.grpc.demo.greeting.GreetResponse;
+import io.gatling.grpc.demo.greeting.Greeting;
+import io.gatling.grpc.demo.greeting.GreetingServiceGrpc;
+import io.gatling.javaapi.core.ScenarioBuilder;
+import io.gatling.javaapi.core.Session;
+import io.gatling.javaapi.core.Simulation;
+import io.gatling.javaapi.grpc.GrpcProtocolBuilder;
 
 import io.grpc.Status;
 
-import static io.gatling.javaapi.core.CoreDsl.*;
+import static io.gatling.javaapi.core.CoreDsl.atOnceUsers;
+import static io.gatling.javaapi.core.CoreDsl.scenario;
 import static io.gatling.javaapi.grpc.GrpcDsl.*;
 
 public class GreetingSimulation extends Simulation {
 
-    GrpcProtocolBuilder baseGrpcProtocol = Configuration.baseGrpcProtocol("localhost", 50051);
+    GrpcProtocolBuilder baseGrpcProtocol = Configuration.baseGrpcProtocolWithMutualAuth("localhost", 50051);
 
     Function<Session, Greeting> greeting = session -> {
         String firstName = session.getString("firstName");
@@ -26,6 +32,7 @@ public class GreetingSimulation extends Simulation {
     };
 
     ScenarioBuilder unary = scenario("Greet Unary")
+            .feed(Feeders.channelCredentials().circular())
             .feed(Feeders.randomNames())
             .exec(grpc("Greet")
                     .unary(GreetingServiceGrpc.getGreetMethod())
@@ -37,6 +44,7 @@ public class GreetingSimulation extends Simulation {
                             response(GreetResponse::getResult).isEL("Hello #{firstName} #{lastName}")));
 
     ScenarioBuilder deadlines = scenario("Greet w/ Deadlines")
+            .feed(Feeders.channelCredentials().circular())
             .feed(Feeders.randomNames())
             .exec(grpc("Greet w/ Deadlines")
                     .unary(GreetingServiceGrpc.getGreetWithDeadlineMethod())
@@ -58,6 +66,6 @@ public class GreetingSimulation extends Simulation {
             scn = unary;
         }
 
-        setUp(scn.injectOpen(atOnceUsers(1))).protocols(baseGrpcProtocol);
+        setUp(scn.injectOpen(atOnceUsers(5))).protocols(baseGrpcProtocol);
     }
 }
