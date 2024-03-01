@@ -4,9 +4,17 @@ import io.gatling.core.Predef._
 import io.gatling.grpc.Predef._
 import io.gatling.grpc.protocol.GrpcProtocolBuilder
 
+import io.grpc._
+
 object Configuration {
+
   def baseGrpcProtocol(host: String, port: Int): GrpcProtocolBuilder =
     grpc
       .forAddress(host, port)
-      .useInsecureTrustManager
+
+  def baseGrpcProtocolWithMutualAuth(host: String, port: Int): GrpcProtocolBuilder =
+    grpc
+      .forAddress(host, port)
+      .channelCredentials("#{channelCredentials}")
+      .overrideAuthority("gatling-grpc-demo-test-seffrver")
 }

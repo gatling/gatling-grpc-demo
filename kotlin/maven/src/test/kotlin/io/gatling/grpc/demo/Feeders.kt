@@ -3,7 +3,31 @@ package io.gatling.grpc.demo
 import java.util.concurrent.ThreadLocalRandom
 import java.util.function.Supplier
 
+import io.gatling.javaapi.core.CoreDsl.*
+import io.gatling.javaapi.core.FeederBuilder
+
+import io.grpc.*
+
 object Feeders {
+
+  private fun channelCredentialsByIndex(i: Int): ChannelCredentials {
+    return TlsChannelCredentials
+      .newBuilder()
+      .keyManager(
+        ClassLoader.getSystemResourceAsStream("certs/client$i.crt"),
+        ClassLoader.getSystemResourceAsStream("certs/client$i.key")
+      )
+      .trustManager(ClassLoader.getSystemResourceAsStream("certs/ca.crt"))
+      .build()
+  }
+
+  fun channelCredentials(): FeederBuilder<Any> {
+    return listFeeder(
+      (1..3).map { i ->
+        mapOf("channelCredentials" to channelCredentialsByIndex(i))
+      }
+    )
+  }
 
   private fun random(alphabet: String, n: Int): String {
     val s = StringBuilder()
