@@ -67,5 +67,6 @@ spotless {
   kotlin {
     ktfmt()
       .googleStyle()
+    toggleOffOn()
   }
 }
