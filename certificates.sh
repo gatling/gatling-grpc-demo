@@ -5,7 +5,7 @@ set -e
 
 CA_CN=gatling-grpc-demo-test-ca
 
-CLIENT_CN_PREFIX==gatling-grpc-demo-test-client
+CLIENT_CN_PREFIX=gatling-grpc-demo-test-client
 SERVER_CN=gatling-grpc-demo-test-server
 
 certs_dir=.certs
