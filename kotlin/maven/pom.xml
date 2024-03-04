@@ -134,6 +134,7 @@
                         <ktfmt>
                             <style>GOOGLE</style>
                         </ktfmt>
+                        <toggleOffOn/>
                     </kotlin>
                 </configuration>
             </plugin>
