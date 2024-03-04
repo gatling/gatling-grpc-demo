@@ -10,12 +10,9 @@ public class EchoServer {
     public static void main(String[] args) throws IOException, InterruptedException, CertificateException {
         SelfSignedCertificate ssc = new SelfSignedCertificate("localhost");
         Server server = ServerBuilder.forPort(50053)
-            .addService(new EchoServiceImpl())
-            .useTransportSecurity(
-                ssc.certificate(),
-                ssc.privateKey()
-            )
-            .build();
+                .addService(new EchoServiceImpl())
+                .useTransportSecurity(ssc.certificate(), ssc.privateKey())
+                .build();
         server.start();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("Received shutdown request");

@@ -10,12 +10,9 @@ public class CalculatorServer {
     public static void main(String[] args) throws CertificateException, IOException, InterruptedException {
         SelfSignedCertificate ssc = new SelfSignedCertificate("localhost");
         Server server = ServerBuilder.forPort(50052)
-            .addService(new CalculatorServiceImpl())
-            .useTransportSecurity(
-                ssc.certificate(),
-                ssc.privateKey()
-            )
-            .build();
+                .addService(new CalculatorServiceImpl())
+                .useTransportSecurity(ssc.certificate(), ssc.privateKey())
+                .build();
         server.start();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("Received shutdown request");
