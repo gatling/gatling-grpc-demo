@@ -17,7 +17,7 @@ import static io.gatling.javaapi.grpc.GrpcDsl.*;
 
 public class CalculatorSimulation extends Simulation {
 
-    GrpcProtocolBuilder baseGrpcProtocol = Configuration.baseGrpcProtocol("localhost", 50052);
+    GrpcProtocolBuilder baseGrpcProtocol = grpc.forAddress("localhost", 50052);
 
     ScenarioBuilder unary = scenario("Calculator Unary")
             .exec(grpc("Sum")

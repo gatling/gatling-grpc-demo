@@ -20,7 +20,9 @@ import static io.gatling.javaapi.grpc.GrpcDsl.*;
 
 public class GreetingSimulation extends Simulation {
 
-    GrpcProtocolBuilder baseGrpcProtocol = Configuration.baseGrpcProtocolWithMutualAuth("localhost", 50051);
+    GrpcProtocolBuilder baseGrpcProtocol = grpc.forAddress("localhost", 50051)
+            .channelCredentials("#{channelCredentials}")
+            .overrideAuthority("gatling-grpc-demo-test-server");
 
     Function<Session, Greeting> greeting = session -> {
         String firstName = session.getString("firstName");

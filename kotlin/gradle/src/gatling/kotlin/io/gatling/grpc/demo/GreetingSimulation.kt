@@ -1,18 +1,20 @@
 package io.gatling.grpc.demo
 
-import java.time.Duration
-
 import io.gatling.grpc.demo.greeting.*
 import io.gatling.javaapi.core.CoreDsl.*
 import io.gatling.javaapi.core.Session
 import io.gatling.javaapi.core.Simulation
 import io.gatling.javaapi.grpc.GrpcDsl.*
-
 import io.grpc.Status
+import java.time.Duration
 
 class GreetingSimulation : Simulation() {
 
-  private val baseGrpcProtocol = Configuration.baseGrpcProtocolWithMutualAuth("localhost", 50051)
+  private val baseGrpcProtocol =
+    grpc
+      .forAddress("localhost", 50051)
+      .channelCredentials("#{channelCredentials}")
+      .overrideAuthority("gatling-grpc-demo-test-server")
 
   private val greetRequest = { session: Session ->
     greetRequest {

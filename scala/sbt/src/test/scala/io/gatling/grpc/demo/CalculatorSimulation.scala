@@ -13,7 +13,7 @@ import io.grpc.Status
 class CalculatorSimulation extends Simulation {
 
   private val baseGrpcProtocol =
-    Configuration.baseGrpcProtocol("localhost", 50052)
+    grpc.forAddress("localhost", 50052)
 
   private val unary = scenario("Calculator Unary")
     .exec(

@@ -12,7 +12,9 @@ import io.grpc.Status
 class GreetingSimulation extends Simulation {
 
   private val baseGrpcProtocol =
-    Configuration.baseGrpcProtocolWithMutualAuth("localhost", 50051)
+    grpc.forAddress("localhost", 50051)
+      .channelCredentials("#{channelCredentials}")
+      .overrideAuthority("gatling-grpc-demo-test-server")
 
   private val greeting: Expression[Greeting] = { session =>
     for {
