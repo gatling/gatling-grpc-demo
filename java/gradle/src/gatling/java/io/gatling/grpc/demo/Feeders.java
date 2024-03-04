@@ -17,16 +17,14 @@ import io.grpc.TlsChannelCredentials;
 public class Feeders {
 
     private static final List<ChannelCredentials> availableChannelCredentials = new ArrayList<>();
+
     static {
         try {
             for (int i = 1; i <= 3; i++) {
-                ChannelCredentials channelCredentials =
-                    TlsChannelCredentials
-                        .newBuilder()
+                ChannelCredentials channelCredentials = TlsChannelCredentials.newBuilder()
                         .keyManager(
-                            ClassLoader.getSystemResourceAsStream("certs/client" + i + ".crt"),
-                            ClassLoader.getSystemResourceAsStream("certs/client" + i + ".key")
-                        )
+                                ClassLoader.getSystemResourceAsStream("certs/client" + i + ".crt"),
+                                ClassLoader.getSystemResourceAsStream("certs/client" + i + ".key"))
                         .trustManager(ClassLoader.getSystemResourceAsStream("certs/ca.crt"))
                         .build();
                 availableChannelCredentials.add(channelCredentials);
@@ -37,8 +35,7 @@ public class Feeders {
     }
 
     public static FeederBuilder<Object> channelCredentials() {
-        List<Map<String, Object>> records =
-            availableChannelCredentials.stream()
+        List<Map<String, Object>> records = availableChannelCredentials.stream()
                 .map(channelCredentials -> Map.<String, Object>of("channelCredentials", channelCredentials))
                 .toList();
         return CoreDsl.listFeeder(records);
