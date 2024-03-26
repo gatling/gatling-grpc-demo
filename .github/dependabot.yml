@@ -7,6 +7,9 @@ updates:
     schedule:
       interval: "weekly"
       day: "sunday"
+    ignore:
+      - dependency-name: "com.google.protobuf:protoc"
+        versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
   - package-ecosystem: "maven"
     directory: "/java/maven"
     commit-message:
@@ -14,6 +17,9 @@ updates:
     schedule:
       interval: "weekly"
       day: "sunday"
+    ignore:
+      - dependency-name: "com.google.protobuf:protoc"
+        versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
   - package-ecosystem: "gradle"
     directory: "/kotlin/gradle"
     commit-message:
@@ -25,6 +31,9 @@ updates:
     schedule:
       interval: "weekly"
       day: "sunday"
+    ignore:
+      - dependency-name: "com.google.protobuf:protoc"
+        versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
   - package-ecosystem: "maven"
     directory: "/kotlin/maven"
     commit-message:
@@ -32,6 +41,9 @@ updates:
     schedule:
       interval: "weekly"
       day: "sunday"
+    ignore:
+      - dependency-name: "com.google.protobuf:protoc"
+        versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
   - package-ecosystem: "gradle"
     directory: "/server"
     commit-message:
@@ -43,3 +55,6 @@ updates:
     schedule:
       interval: "weekly"
       day: "sunday"
+    ignore:
+      - dependency-name: "com.google.protobuf:protoc"
+        versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
