@@ -34,6 +34,8 @@ updates:
     ignore:
       - dependency-name: "com.google.protobuf:protoc"
         versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
+      - dependency-name: "com.google.protobuf:protobuf-kotlin"
+        versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
   - package-ecosystem: "maven"
     directory: "/kotlin/maven"
     commit-message:
@@ -43,6 +45,8 @@ updates:
       day: "sunday"
     ignore:
       - dependency-name: "com.google.protobuf:protoc"
+        versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
+      - dependency-name: "com.google.protobuf:protobuf-kotlin"
         versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
   - package-ecosystem: "gradle"
     directory: "/server"
