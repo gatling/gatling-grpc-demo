@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
   gatlingApi("com.google.protobuf:protobuf-kotlin:3.25.3")
-  gatlingImplementation("io.gatling:gatling-grpc-java:3.10.5.2")
+  gatlingImplementation("io.gatling:gatling-grpc-java:3.10.5.3")
 }
 
 gatling {
