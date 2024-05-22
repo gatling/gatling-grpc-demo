@@ -5,14 +5,14 @@
 
     <groupId>io.gatling.grpc.demo</groupId>
     <artifactId>gatling-grpc-demo-maven-java</artifactId>
-    <version>3.11.2</version>
+    <version>3.11.3</version>
 
     <properties>
         <!-- Change the line bellow if you're compiling with JDK 11 or 21 -->
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <gatling.version>${project.version}</gatling.version>
-        <gatling-grpc.version>3.11.2</gatling-grpc.version>
+        <gatling-grpc.version>3.11.3</gatling-grpc.version>
         <gatling-maven-plugin.version>4.9.0</gatling-maven-plugin.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-jar-plugin.version>3.4.1</maven-jar-plugin.version>
