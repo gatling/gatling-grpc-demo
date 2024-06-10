@@ -2,5 +2,5 @@ addSbtPlugin("io.gatling"         % "gatling-sbt"           % "4.9.0")
 addSbtPlugin("com.thesamet"       % "sbt-protoc"            % "1.0.7")
 
 libraryDependencies ++= Seq(
-  "com.thesamet.scalapb" %% "compilerplugin" % "0.11.15"
+  "com.thesamet.scalapb" %% "compilerplugin" % "0.11.17"
 )
