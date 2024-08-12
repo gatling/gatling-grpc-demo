@@ -14,7 +14,7 @@
         <gatling.version>${project.version}</gatling.version>
         <gatling-grpc.version>3.11.5</gatling-grpc.version>
         <gatling-maven-plugin.version>4.9.6</gatling-maven-plugin.version>
-        <kotlin.version>1.9.24</kotlin.version>
+        <kotlin.version>2.0.10</kotlin.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
