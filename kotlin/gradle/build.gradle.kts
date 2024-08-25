@@ -1,6 +1,6 @@
 plugins {
   idea
-  kotlin("jvm")               version "2.0.10"
+  kotlin("jvm")               version "2.0.20"
   kotlin("plugin.allopen")    version "2.0.10"
 
   id("com.google.protobuf")   version "0.9.4"
