@@ -105,11 +105,11 @@ public class CalculatorSimulation extends Simulation {
                     .check(statusCode().is(Status.Code.INVALID_ARGUMENT)));
 
     // spotless:off
-    // ./gradlew -Dgrpc.scenario=unary gatlingRun-io.gatling.grpc.demo.CalculatorSimulation
-    // ./gradlew -Dgrpc.scenario=serverStreaming gatlingRun-io.gatling.grpc.demo.CalculatorSimulation
-    // ./gradlew -Dgrpc.scenario=clientStreaming gatlingRun-io.gatling.grpc.demo.CalculatorSimulation
-    // ./gradlew -Dgrpc.scenario=bidirectionalStreaming gatlingRun-io.gatling.grpc.demo.CalculatorSimulation
-    // ./gradlew -Dgrpc.scenario=deadlines gatlingRun-io.gatling.grpc.demo.CalculatorSimulation
+    // ./gradlew -Dgrpc.scenario=unary gatlingRun --simulation io.gatling.grpc.demo.CalculatorSimulation
+    // ./gradlew -Dgrpc.scenario=serverStreaming gatlingRun --simulation io.gatling.grpc.demo.CalculatorSimulation
+    // ./gradlew -Dgrpc.scenario=clientStreaming gatlingRun --simulation io.gatling.grpc.demo.CalculatorSimulation
+    // ./gradlew -Dgrpc.scenario=bidirectionalStreaming gatlingRun --simulation io.gatling.grpc.demo.CalculatorSimulation
+    // ./gradlew -Dgrpc.scenario=deadlines gatlingRun --simulation io.gatling.grpc.demo.CalculatorSimulation
     // spotless:on
 
     {

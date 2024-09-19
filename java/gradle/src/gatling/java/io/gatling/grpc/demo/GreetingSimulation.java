@@ -56,8 +56,8 @@ public class GreetingSimulation extends Simulation {
                     .deadlineAfter(Duration.ofMillis(100))
                     .check(statusCode().is(Status.Code.DEADLINE_EXCEEDED)));
 
-    // ./gradlew -Dgrpc.scenario=unary gatlingRun-io.gatling.grpc.demo.GreetingSimulation
-    // ./gradlew -Dgrpc.scenario=deadlines gatlingRun-io.gatling.grpc.demo.GreetingSimulation
+    // ./gradlew -Dgrpc.scenario=unary gatlingRun --simulation io.gatling.grpc.demo.GreetingSimulation
+    // ./gradlew -Dgrpc.scenario=deadlines gatlingRun --simulation io.gatling.grpc.demo.GreetingSimulation
 
     {
         String name = System.getProperty("grpc.scenario");

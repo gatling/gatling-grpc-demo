@@ -51,8 +51,8 @@ class GreetingSimulation : Simulation() {
           .check(statusCode().shouldBe(Status.Code.DEADLINE_EXCEEDED))
       )
 
-  // ./gradlew -Dgrpc.scenario=unary gatlingRun-io.gatling.grpc.demo.GreetingSimulation
-  // ./gradlew -Dgrpc.scenario=deadlines gatlingRun-io.gatling.grpc.demo.GreetingSimulation
+  // ./gradlew -Dgrpc.scenario=unary gatlingRun --simulation io.gatling.grpc.demo.GreetingSimulation
+  // ./gradlew -Dgrpc.scenario=deadlines gatlingRun --simulation io.gatling.grpc.demo.GreetingSimulation
 
   init {
     val name = System.getProperty("grpc.scenario")
