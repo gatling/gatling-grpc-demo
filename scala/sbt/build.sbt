@@ -2,7 +2,7 @@ enablePlugins(GatlingPlugin)
 
 name := "gatling-grpc-demo-sbt-scala"
 
-scalaVersion := "2.13.14"
+scalaVersion := "2.13.15"
 scalacOptions := Seq(
   "-encoding", "UTF-8", "-release:8", "-deprecation",
   "-feature", "-unchecked", "-language:implicitConversions", "-language:postfixOps")
