@@ -6,7 +6,8 @@ updates:
       prefix: "chore"
     schedule:
       interval: "weekly"
-      day: "sunday"
+      day: "monday" # explicit, even tough it's the weekly default
+      time: "07:00" # UTC
     ignore:
       - dependency-name: "com.google.protobuf:protoc"
         versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
@@ -16,7 +17,8 @@ updates:
       prefix: "chore"
     schedule:
       interval: "weekly"
-      day: "sunday"
+      day: "monday" # explicit, even tough it's the weekly default
+      time: "07:00" # UTC
     ignore:
       - dependency-name: "com.google.protobuf:protoc"
         versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
@@ -30,7 +32,8 @@ updates:
           - "org.jetbrains.kotlin.*"
     schedule:
       interval: "weekly"
-      day: "sunday"
+      day: "monday" # explicit, even tough it's the weekly default
+      time: "07:00" # UTC
     ignore:
       - dependency-name: "com.google.protobuf:protoc"
         versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
@@ -42,7 +45,8 @@ updates:
       prefix: "chore"
     schedule:
       interval: "weekly"
-      day: "sunday"
+      day: "monday" # explicit, even tough it's the weekly default
+      time: "07:00" # UTC
     ignore:
       - dependency-name: "com.google.protobuf:protoc"
         versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
@@ -58,7 +62,8 @@ updates:
           - "io.grpc:*"
     schedule:
       interval: "weekly"
-      day: "sunday"
+      day: "monday" # explicit, even tough it's the weekly default
+      time: "07:00" # UTC
     ignore:
       - dependency-name: "com.google.protobuf:protoc"
         versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
