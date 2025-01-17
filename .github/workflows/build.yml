@@ -31,6 +31,9 @@ jobs:
           distribution: 'zulu'
           java-version: '21'
 
+      - name: Setup sbt
+        uses: sbt/setup-sbt@v1
+
       - name: Build Java Maven
         working-directory: java/maven
         run: ./mvnw --batch-mode -Dstyle.color=always --no-transfer-progress test-compile
