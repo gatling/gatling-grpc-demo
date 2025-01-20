@@ -15,7 +15,7 @@ dependencies {
   implementation "io.grpc:grpc-netty:1.69.1"
   implementation "io.grpc:grpc-protobuf:1.69.1"
   implementation "io.grpc:grpc-services:1.69.1" // reflection
-  implementation "org.bouncycastle:bcpkix-jdk18on:1.79"
+  implementation "org.bouncycastle:bcpkix-jdk18on:1.80"
 }
 
 idea {
