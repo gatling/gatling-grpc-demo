@@ -14,7 +14,7 @@ object Protobuf {
       PB.gens.plugin("grpc-java") -> (Test / sourceManaged).value
     ),
     libraryDependencies ++= Seq(
-      ("io.grpc" % "protoc-gen-grpc-java" % scalapb.compiler.Version.grpcJavaVersion).asProtocPlugin()
+      ("io.grpc" % "protoc-gen-grpc-java" % "1.70.0").asProtocPlugin()
     )
   )
 
