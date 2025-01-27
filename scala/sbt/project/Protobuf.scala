@@ -5,7 +5,7 @@ import sbtprotoc.ProtocPlugin.autoImport._
 object Protobuf {
 
   private val commons = Seq(
-    PB.protocVersion := "3.25.3" // scalapb.compiler.Version.protobufVersion points to an older version
+    PB.protocVersion := "3.25.6" // scalapb.compiler.Version.protobufVersion points to an older version
   )
 
   val javaSettings: Seq[Def.Setting[_]] = commons ++ Seq(
