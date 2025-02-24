@@ -21,7 +21,7 @@
         <protobuf.version>3.25.6</protobuf.version>
         <protobuf-maven-plugin.version>0.6.1</protobuf-maven-plugin.version>
         <protoc-gen-grpc-java.version>1.70.0</protoc-gen-grpc-java.version>
-        <spotless.version>2.44.2</spotless.version>
+        <spotless.version>2.44.3</spotless.version>
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
         <build-helper-maven-plugin.version>3.6.0</build-helper-maven-plugin.version>
     </properties>
