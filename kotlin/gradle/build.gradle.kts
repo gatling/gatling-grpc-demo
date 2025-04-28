@@ -40,7 +40,7 @@ sourceSets.getByName("gatling") {
 
 protobuf {
   protoc {
-    artifact = "com.google.protobuf:protoc:3.25.6"
+    artifact = "com.google.protobuf:protoc:3.25.7"
   }
   plugins {
     create("grpc") {
