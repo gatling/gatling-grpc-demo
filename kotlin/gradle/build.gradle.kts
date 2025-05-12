@@ -5,7 +5,7 @@ plugins {
 
   id("com.google.protobuf")   version "0.9.5"
   id("com.diffplug.spotless") version "7.0.3"
-  id("io.gatling.gradle")     version "3.14.0"
+  id("io.gatling.gradle")     version "3.14.0.2"
 }
 
 repositories {
