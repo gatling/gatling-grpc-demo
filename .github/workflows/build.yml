@@ -53,3 +53,7 @@ jobs:
       - name: Build Scala sbt
         working-directory: scala/sbt
         run: sbt Gatling/compile
+
+      - name: Build server
+        working-directory: server
+        run: ./gradlew classes
