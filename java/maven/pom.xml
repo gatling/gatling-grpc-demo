@@ -14,14 +14,13 @@
         <gatling.version>${project.version}</gatling.version>
         <gatling-grpc.version>3.14.3.1</gatling-grpc.version>
         <gatling-maven-plugin.version>4.20.0</gatling-maven-plugin.version>
+        <grpc.version>1.74.0</grpc.version>
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
         <protobuf.version>3.25.8</protobuf.version>
-        <protobuf-maven-plugin.version>0.6.1</protobuf-maven-plugin.version>
-        <protoc-gen-grpc-java.version>1.74.0</protoc-gen-grpc-java.version>
+        <protobuf-maven-plugin.version>3.7.0</protobuf-maven-plugin.version>
         <spotless.version>2.46.1</spotless.version>
-        <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
-        <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -40,18 +39,16 @@
     </dependencies>
 
     <build>
-        <extensions>
-            <extension>
-                <groupId>kr.motd.maven</groupId>
-                <artifactId>os-maven-plugin</artifactId>
-                <version>${os-maven-plugin.version}</version>
-            </extension>
-        </extensions>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -67,42 +64,28 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.xolstice.maven.plugins</groupId>
+                <groupId>io.github.ascopes</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
                 <version>${protobuf-maven-plugin.version}</version>
                 <executions>
                     <execution>
-                        <id>compile</id>
                         <goals>
-                            <goal>test-compile</goal>
-                            <goal>test-compile-custom</goal>
+                            <goal>generate-test</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <pluginId>grpc-java</pluginId>
-                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:${protoc-gen-grpc-java.version}:exe:${os.detected.classifier}</pluginArtifact>
-                    <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <protocVersion>${protobuf.version}</protocVersion>
+                    <binaryMavenPlugins>
+                        <binaryMavenPlugin>
+                            <groupId>io.grpc</groupId>
+                            <artifactId>protoc-gen-grpc-java</artifactId>
+                            <version>${grpc.version}</version>
+                            <!-- Avoid dependency on javax.annotation-api -->
+                            <options>@generated=omit</options>
+                        </binaryMavenPlugin>
+                    </binaryMavenPlugins>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>${build-helper-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>add-source</id>
-                        <phase>generate-test-sources</phase>
-                        <goals>
-                            <goal>add-test-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/generated-test-sources/protobuf/java</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
