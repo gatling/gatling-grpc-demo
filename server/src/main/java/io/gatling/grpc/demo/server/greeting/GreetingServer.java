@@ -7,20 +7,31 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import io.gatling.grpc.demo.server.Configuration;
 
 import io.grpc.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GreetingServer {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GreetingServer.class);
+
     public static void main(String[] args) throws IOException, InterruptedException {
-        ServerCredentials credentials = Configuration.credentials();
-        Server server = Grpc.newServerBuilderForPort(50051, credentials)
+        final var server = launch();
+        server.awaitTermination();
+    }
+
+    public static Server launch() throws IOException {
+        final var credentials = Configuration.credentials();
+        final var server = Grpc.newServerBuilderForPort(50051, credentials)
                 .addService(ServerInterceptors.intercept(new GreetingServiceImpl(), new MyInterceptor()))
                 .build();
         server.start();
+        LOGGER.info("GreetingServer started, listening on {}", server.getPort());
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            System.out.println("Received shutdown request");
+            LOGGER.info("GreetingServer received shutdown request");
             server.shutdown();
-            System.out.println("Successfully stopped the server");
+            LOGGER.info("GreetingServer successfully stopped");
         }));
-        server.awaitTermination();
+        return server;
     }
 
     public static class MyInterceptor implements ServerInterceptor {
@@ -28,9 +39,9 @@ public class GreetingServer {
         public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(
                 ServerCall<ReqT, RespT> call, Metadata headers, ServerCallHandler<ReqT, RespT> next) {
             try {
-                var sslSession = call.getAttributes().get(Grpc.TRANSPORT_ATTR_SSL_SESSION);
-                var certificate = (X509Certificate) sslSession.getPeerCertificates()[0];
-                System.out.println("Received greeting from: " + certificate.getSubjectX500Principal());
+                final var sslSession = call.getAttributes().get(Grpc.TRANSPORT_ATTR_SSL_SESSION);
+                final var certificate = (X509Certificate) sslSession.getPeerCertificates()[0];
+                LOGGER.trace("Received greeting from: {}", certificate.getSubjectX500Principal());
             } catch (SSLPeerUnverifiedException e) {
                 e.printStackTrace();
             }

@@ -1,0 +1,48 @@
+name: Publish gRPC demo server
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # JVM_OPTS: "-Xmx6G" # ignored when .jvmopts is present
+      SBT_OPTS: "-Dsbt.ci=true"
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      #     - name: Cache
+      #       No cache for release! We want clean and full release!
+
+      - name: Build
+        run: ./gradlew build
+        working-directory: server
+
+      - name: Build and push private gRPC demo server docker image (sandbox/eu-west-3)
+        uses: ./.github/actions/docker-ecr-build-and-push
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_SANDBOX_RELEASE }}
+          aws-region: eu-west-3
+          docker-build-args: LABEL="gatling-grpc-demo-server"
+          docker-context: server/build/distributions/
+          docker-file: server/Dockerfile
+          docker-image-name: grpc-demo-server
+          docker-image-version: build-${{ github.run_number }}
+          docker-tag-latest: true

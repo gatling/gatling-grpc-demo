@@ -1,0 +1,118 @@
+name: "Docker build and push to Amazon ECR"
+description: "Build a docker image and push it to a region based Amazon ECR repository"
+inputs:
+  aws-access-key-id:
+    description: "AWS access key ID if not using role-to-assume"
+  aws-secret-access-key:
+    description: "AWS secret access key if AWS access key ID is defined"
+  role-to-assume:
+    description: "AWS role to assume if not using access keys"
+  aws-region:
+    description: "The AWS region"
+    required: true
+  docker-build-args:
+    description: "Docker list of args for build"
+  docker-context:
+    description: "Docker build context path"
+    required: true
+  docker-file:
+    description: "Docker file path"
+    required: true
+  docker-image-name:
+    description: "Docker image name"
+    required: true
+  docker-image-version:
+    description: "Docker image version"
+    required: true
+  docker-tag-latest:
+    description: "Also tag latest"
+    default: false
+    type: boolean
+  multi-arch:
+    description: "Docker build for multiple architectures or not"
+    default: false
+    required: true
+    type: boolean
+outputs:
+  image:
+    description: 'Docker image name'
+    value: ${{ steps.extract-image-name.outputs.image }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Configure AWS Credentials (with access key ID)
+      uses: aws-actions/configure-aws-credentials@v5
+      with:
+        aws-access-key-id: ${{ inputs.aws-access-key-id }}
+        aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
+        role-to-assume: ${{ inputs.role-to-assume }}
+        aws-region: ${{ inputs.aws-region }}
+
+    - name: Login to Amazon ECR
+      id: ecr-login
+      uses: aws-actions/amazon-ecr-login@v2
+      with:
+        mask-password: true
+
+    - name: Prepare docker tags
+      id: tags
+      shell: bash
+      run: |
+        tags="${{ steps.ecr-login.outputs.registry }}/${{ inputs.docker-image-name }}:${{ inputs.docker-image-version }}"
+        if [[ "${{ inputs.docker-tag-latest }}" = "true" ]]; then 
+          tags="$tags,${{ steps.ecr-login.outputs.registry }}/${{ inputs.docker-image-name }}:latest"
+        fi
+        echo "tags=$tags" >> $GITHUB_OUTPUT
+
+    - name: Set up Docker Buildx
+      if: ${{ inputs.multi-arch == 'false' }}
+      uses: docker/setup-buildx-action@v3
+
+    - name: Docker build and push (single arch)
+      if: ${{ inputs.multi-arch == 'false' }}
+      uses: docker/build-push-action@v6
+      with:
+        context: ${{ inputs.docker-context }}
+        sbom: true
+        provenance: mode=max
+        build-args: ${{ inputs.docker-build-args }}
+        file: ${{ inputs.docker-file }}
+        push: true
+        tags: ${{ steps.tags.outputs.tags }}
+
+    # Set up emulator for non-native platforms (the GH runners are on amd64 architecture) so that
+    # we can build the control plane for arm64 too
+    - name: Set up QEMU
+      if: ${{ inputs.multi-arch == 'true' }}
+      uses: docker/setup-qemu-action@v3
+      with:
+        platforms: arm64
+
+    # Docker Buildx allows easy cross-building for different platforms
+    - name: Set up Docker Buildx
+      if: ${{ inputs.multi-arch == 'true' }}
+      uses: docker/setup-buildx-action@v3
+      with:
+        platforms: linux/amd64,linux/arm64
+
+    - name: Docker build and push (multi-arch)
+      id: build-and-push
+      if: ${{ inputs.multi-arch == 'true' }}
+      uses: docker/build-push-action@v6
+      with:
+        context: ${{ inputs.docker-context }}
+        sbom: true
+        provenance: mode=max
+        build-args: ${{ inputs.docker-build-args }}
+        file: ${{ inputs.docker-file }}
+        push: true
+        tags: ${{ steps.tags.outputs.tags }}
+        platforms: linux/amd64,linux/arm64
+
+    - name: Extract Image Name
+      id: extract-image-name
+      shell: bash
+      run: |
+        IMAGE_NAME=$(echo '${{ steps.build-and-push.outputs.metadata }}' | jq -r '.["image.name"]')
+        echo "image=$IMAGE_NAME" >> "$GITHUB_OUTPUT"

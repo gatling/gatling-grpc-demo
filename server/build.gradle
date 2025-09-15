@@ -12,10 +12,12 @@ repositories {
 
 dependencies {
   compileOnly "javax.annotation:javax.annotation-api:1.3.2"
+  implementation "ch.qos.logback:logback-classic:1.5.18"
   implementation "io.grpc:grpc-netty:1.75.0"
   implementation "io.grpc:grpc-protobuf:1.75.0"
   implementation "io.grpc:grpc-services:1.75.0" // reflection
   implementation "org.bouncycastle:bcpkix-jdk18on:1.81"
+  implementation "org.slf4j:slf4j-api:2.0.17"
 }
 
 idea {
@@ -50,7 +52,7 @@ spotless {
     removeUnusedImports()
     target project.fileTree(project.rootDir) {
       include "**/*.java"
-      exclude "build/generated/**/*.*"
+      exclude "build/**"
     }
     trimTrailingWhitespace()
   }
@@ -60,5 +62,5 @@ application {
   mainClassName =
     project.hasProperty("mainClass") ?
       project.property("mainClass") :
-      "io.gatling.grpc.demo.server.greeting.GreetingServer"
+      "io.gatling.grpc.demo.server.Main"
 }
