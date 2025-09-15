@@ -123,7 +123,8 @@ public class CalculatorSimulation extends Simulation {
                 case "clientStreaming" -> clientStreaming;
                 case "bidirectionalStreaming" -> bidirectionalStreaming;
                 case "deadlines" -> deadlines;
-                default -> unary;};
+                default -> unary;
+            };
         }
 
         setUp(scn.injectOpen(atOnceUsers(1))).protocols(baseGrpcProtocol);
