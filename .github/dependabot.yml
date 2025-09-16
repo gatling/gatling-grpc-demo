@@ -8,9 +8,6 @@ updates:
       interval: "weekly"
       day: "monday" # explicit, even tough it's the weekly default
       time: "07:00" # UTC
-    ignore:
-      - dependency-name: "com.google.protobuf:protoc"
-        versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
   - package-ecosystem: "maven"
     directory: "/java/maven"
     commit-message:
@@ -19,9 +16,6 @@ updates:
       interval: "weekly"
       day: "monday" # explicit, even tough it's the weekly default
       time: "07:00" # UTC
-    ignore:
-      - dependency-name: "com.google.protobuf:protoc"
-        versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
   - package-ecosystem: "gradle"
     directory: "/kotlin/gradle"
     commit-message:
@@ -34,11 +28,6 @@ updates:
       interval: "weekly"
       day: "monday" # explicit, even tough it's the weekly default
       time: "07:00" # UTC
-    ignore:
-      - dependency-name: "com.google.protobuf:protoc"
-        versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
-      - dependency-name: "com.google.protobuf:protobuf-kotlin"
-        versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
   - package-ecosystem: "maven"
     directory: "/kotlin/maven"
     commit-message:
@@ -47,11 +36,6 @@ updates:
       interval: "weekly"
       day: "monday" # explicit, even tough it's the weekly default
       time: "07:00" # UTC
-    ignore:
-      - dependency-name: "com.google.protobuf:protoc"
-        versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
-      - dependency-name: "com.google.protobuf:protobuf-kotlin"
-        versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
   - package-ecosystem: "gradle"
     directory: "/server"
     commit-message:
@@ -64,6 +48,3 @@ updates:
       interval: "weekly"
       day: "monday" # explicit, even tough it's the weekly default
       time: "07:00" # UTC
-    ignore:
-      - dependency-name: "com.google.protobuf:protoc"
-        versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
