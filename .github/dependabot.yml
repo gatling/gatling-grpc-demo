@@ -1,69 +1,35 @@
 version: 2
 updates:
+# group by directories
   - package-ecosystem: "gradle"
-    directory: "/java/gradle"
-    commit-message:
-      prefix: "chore"
-    schedule:
-      interval: "weekly"
-      day: "monday" # explicit, even tough it's the weekly default
-      time: "07:00" # UTC
-    ignore:
-      - dependency-name: "com.google.protobuf:protoc"
-        versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
-  - package-ecosystem: "maven"
-    directory: "/java/maven"
-    commit-message:
-      prefix: "chore"
-    schedule:
-      interval: "weekly"
-      day: "monday" # explicit, even tough it's the weekly default
-      time: "07:00" # UTC
-    ignore:
-      - dependency-name: "com.google.protobuf:protoc"
-        versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
-  - package-ecosystem: "gradle"
-    directory: "/kotlin/gradle"
-    commit-message:
-      prefix: "chore"
+    directories:
+      - "/java/gradle"
+      - "/kotlin/gradle"
+      - "/server"
     groups:
-      grpc:
+      gatling:
+        patterns:
+          - "io.gatling*"
+      kotlin:
         patterns:
           - "org.jetbrains.kotlin.*"
-    schedule:
-      interval: "weekly"
-      day: "monday" # explicit, even tough it's the weekly default
-      time: "07:00" # UTC
-    ignore:
-      - dependency-name: "com.google.protobuf:protoc"
-        versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
-      - dependency-name: "com.google.protobuf:protobuf-kotlin"
-        versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
-  - package-ecosystem: "maven"
-    directory: "/kotlin/maven"
     commit-message:
       prefix: "chore"
     schedule:
       interval: "weekly"
       day: "monday" # explicit, even tough it's the weekly default
       time: "07:00" # UTC
-    ignore:
-      - dependency-name: "com.google.protobuf:protoc"
-        versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
-      - dependency-name: "com.google.protobuf:protobuf-kotlin"
-        versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
-  - package-ecosystem: "gradle"
-    directory: "/server"
+  - package-ecosystem: "maven"
+    directories:
+      - "/java/maven"
+      - "/kotlin/maven"
     commit-message:
       prefix: "chore"
     groups:
-      grpc:
+      gatling:
         patterns:
-          - "io.grpc:*"
+          - "io.gatling*"
     schedule:
       interval: "weekly"
       day: "monday" # explicit, even tough it's the weekly default
       time: "07:00" # UTC
-    ignore:
-      - dependency-name: "com.google.protobuf:protoc"
-        versions: ['>= 4'] # https://github.com/grpc/grpc-java/issues/11015
