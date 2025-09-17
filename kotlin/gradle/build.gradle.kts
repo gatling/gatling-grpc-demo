@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-  gatlingApi("com.google.protobuf:protobuf-kotlin:3.25.8")
+  gatlingApi("com.google.protobuf:protobuf-kotlin:4.32.1")
   gatlingImplementation("io.gatling:gatling-grpc-java:3.14.4")
 }
 
@@ -40,7 +40,7 @@ sourceSets.getByName("gatling") {
 
 protobuf {
   protoc {
-    artifact = "com.google.protobuf:protoc:3.25.8"
+    artifact = "com.google.protobuf:protoc:4.32.1"
   }
   plugins {
     create("grpc") {
