@@ -16,7 +16,7 @@ dependencies {
   implementation "io.grpc:grpc-netty:1.75.0"
   implementation "io.grpc:grpc-protobuf:1.75.0"
   implementation "io.grpc:grpc-services:1.75.0" // reflection
-  implementation "org.bouncycastle:bcpkix-jdk18on:1.81"
+  implementation "org.bouncycastle:bcpkix-jdk18on:1.82"
   implementation "org.slf4j:slf4j-api:2.0.17"
 }
 
