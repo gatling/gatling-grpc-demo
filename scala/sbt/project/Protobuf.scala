@@ -5,7 +5,7 @@ import sbtprotoc.ProtocPlugin.autoImport._
 object Protobuf {
 
   private val commons = Seq(
-    PB.protocVersion := "3.25.8" // scalapb.compiler.Version.protobufVersion points to an older version
+    PB.protocVersion := "4.32.1" // scalapb.compiler.Version.protobufVersion points to an older version
   )
 
   val javaSettings: Seq[Def.Setting[_]] = commons ++ Seq(
@@ -14,7 +14,7 @@ object Protobuf {
       PB.gens.plugin("grpc-java") -> (Test / sourceManaged).value
     ),
     libraryDependencies ++= Seq(
-      ("io.grpc" % "protoc-gen-grpc-java" % "1.74.0").asProtocPlugin()
+      ("io.grpc" % "protoc-gen-grpc-java" % "1.75.0").asProtocPlugin()
     )
   )
 
