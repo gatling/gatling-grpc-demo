@@ -25,13 +25,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup JDK
+      - name: Set up JDK
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: '21'
 
-      - name: Setup sbt
+      - name: Set up Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20
+
+      - name: Set up sbt
         uses: sbt/setup-sbt@v1
 
       - name: Build Java Maven
@@ -41,6 +46,13 @@ jobs:
       - name: Build Java Gradle
         working-directory: java/gradle
         run: ./gradlew gatlingClasses
+
+      - name: Build JavaScript
+        working-directory: javascript
+        run: |
+          npm ci
+          npm run format-check
+          npm run build
 
       - name: Build Kotlin Maven
         working-directory: kotlin/maven
@@ -57,3 +69,10 @@ jobs:
       - name: Build server
         working-directory: server
         run: ./gradlew classes
+
+      - name: Build TypeScript
+        working-directory: typescript
+        run: |
+          npm ci
+          npm run format-check
+          npm run build

@@ -1,0 +1,24 @@
+{
+  "name": "gatling-js-demo",
+  "version": "3.14.500",
+  "private": true,
+  "type": "module",
+  "main": "target/bundle",
+  "dependencies": {
+    "@gatling.io/core": "../../../core/gatling-js/tmp/core/package",
+    "@gatling.io/grpc": "../../../core/gatling-js/tmp/grpc/package",
+    "@gatling.io/http": "../../../core/gatling-js/tmp/http/package"
+  },
+  "devDependencies": {
+    "@gatling.io/cli": "../../../core/gatling-js/tmp/cli/package",
+    "prettier": "3.6.2",
+    "rimraf": "6.0.1"
+  },
+  "scripts": {
+    "clean": "rimraf target",
+    "format": "prettier --write '**/*.js'",
+    "format-check": "prettier --check '**/*.js'",
+    "build": "gatling build",
+    "recorder": "gatling recorder"
+  }
+}

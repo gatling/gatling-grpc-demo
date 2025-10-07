@@ -28,6 +28,14 @@ idea {
   }
 }
 
+sourceSets {
+  main {
+    proto {
+      srcDir "src/main/protobuf"
+    }
+  }
+}
+
 protobuf {
   protoc {
     artifact = "com.google.protobuf:protoc:4.32.1"
