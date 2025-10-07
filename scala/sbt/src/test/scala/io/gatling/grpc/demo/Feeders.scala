@@ -26,7 +26,7 @@ object Feeders {
 
   private def randomString(n: Int): String = random(Alphabet, n)
 
-  def randomNames: Iterator[Map[String, String]] =
+  val randomNames: Iterator[Map[String, String]] =
     Iterator.continually {
       Map(
         "firstName" -> randomString(20),

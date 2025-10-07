@@ -25,7 +25,7 @@ class CalculatorSimulation : Simulation() {
           )
           .check(
             statusCode().shouldBe(Status.Code.OK),
-            response(SumResponse::getSumResult).shouldBe(3)
+            response(SumResponse::getSumResult).shouldBe(3),
           )
       )
 
@@ -36,14 +36,14 @@ class CalculatorSimulation : Simulation() {
         statusCode().shouldBe(Status.Code.OK),
         response(PrimeNumberDecompositionResponse::getPrimeFactor)
           .transform { p -> p == 2L || p == 5L || p == 17L || p == 97L || p == 6669961L }
-          .shouldBe(true)
+          .shouldBe(true),
       )
 
   private val serverStreaming =
     scenario("Calculator Server Streaming")
       .exec(
         serverStream.send(primeNumberDecompositionRequest { number = 109987656890L }),
-        serverStream.awaitStreamEnd()
+        serverStream.awaitStreamEnd(),
       )
 
   private val clientStream =
@@ -51,7 +51,7 @@ class CalculatorSimulation : Simulation() {
       .clientStream(CalculatorServiceGrpc.getComputeAverageMethod())
       .check(
         statusCode().shouldBe(Status.Code.OK),
-        response(ComputeAverageResponse::getAverage).saveAs("average")
+        response(ComputeAverageResponse::getAverage).saveAs("average"),
       )
 
   private val clientStreaming =
@@ -74,7 +74,7 @@ class CalculatorSimulation : Simulation() {
           val average = session.getDouble("average")
           println("average: $average")
           session
-        }
+        },
       )
 
   private val bidirectionalStream =
@@ -82,7 +82,7 @@ class CalculatorSimulation : Simulation() {
       .bidiStream(CalculatorServiceGrpc.getFindMaximumMethod())
       .check(
         statusCode().shouldBe(Status.Code.OK),
-        response(FindMaximumResponse::getMaximum).saveAs("maximum")
+        response(FindMaximumResponse::getMaximum).saveAs("maximum"),
       )
 
   private val bidirectionalStreaming =
@@ -104,7 +104,7 @@ class CalculatorSimulation : Simulation() {
           val maximum = session.getInt("maximum")
           println("maximum: $maximum")
           session
-        }
+        },
       )
 
   private val deadlines =

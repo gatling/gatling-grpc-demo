@@ -34,8 +34,8 @@ public class GreetingSimulation extends Simulation {
     };
 
     ScenarioBuilder unary = scenario("Greet Unary")
-            .feed(Feeders.channelCredentials().circular())
-            .feed(Feeders.randomNames())
+            .feed(Feeders.CHANNEL_CREDENTIALS.circular())
+            .feed(Feeders.RANDOM_NAMES)
             .exec(grpc("Greet")
                     .unary(GreetingServiceGrpc.getGreetMethod())
                     .send(session -> GreetRequest.newBuilder()
@@ -46,8 +46,8 @@ public class GreetingSimulation extends Simulation {
                             response(GreetResponse::getResult).isEL("Hello #{firstName} #{lastName}")));
 
     ScenarioBuilder deadlines = scenario("Greet w/ Deadlines")
-            .feed(Feeders.channelCredentials().circular())
-            .feed(Feeders.randomNames())
+            .feed(Feeders.CHANNEL_CREDENTIALS.circular())
+            .feed(Feeders.RANDOM_NAMES)
             .exec(grpc("Greet w/ Deadlines")
                     .unary(GreetingServiceGrpc.getGreetWithDeadlineMethod())
                     .send(session -> GreetRequest.newBuilder()
