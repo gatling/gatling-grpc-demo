@@ -16,9 +16,11 @@ server_dir=server/src/main
 client_dirs=(
   java/gradle/src/gatling
   java/maven/src/test
+  javascript
   kotlin/gradle/src/gatling
   kotlin/maven/src/test
   scala/sbt/src/test
+  typescript
 )
 
 ## Certificate Authority

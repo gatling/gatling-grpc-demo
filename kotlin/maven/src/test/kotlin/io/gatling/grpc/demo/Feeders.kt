@@ -4,7 +4,6 @@ import io.gatling.javaapi.core.CoreDsl.*
 import io.gatling.javaapi.core.FeederBuilder
 import io.grpc.*
 import java.util.concurrent.ThreadLocalRandom
-import java.util.function.Supplier
 
 object Feeders {
 
@@ -12,17 +11,14 @@ object Feeders {
     return TlsChannelCredentials.newBuilder()
       .keyManager(
         ClassLoader.getSystemResourceAsStream("certs/client$i.crt"),
-        ClassLoader.getSystemResourceAsStream("certs/client$i.key")
+        ClassLoader.getSystemResourceAsStream("certs/client$i.key"),
       )
       .trustManager(ClassLoader.getSystemResourceAsStream("certs/ca.crt"))
       .build()
   }
 
-  fun channelCredentials(): FeederBuilder<Any> {
-    return listFeeder(
-      (1..3).map { i -> mapOf("channelCredentials" to channelCredentialsByIndex(i)) }
-    )
-  }
+  val channelCredentials: FeederBuilder<Any> =
+    listFeeder((1..3).map { i -> mapOf("channelCredentials" to channelCredentialsByIndex(i)) })
 
   private fun random(alphabet: String, n: Int): String {
     val s = StringBuilder()
@@ -37,17 +33,14 @@ object Feeders {
     return random("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", n)
   }
 
-  fun randomNames(): Supplier<Iterator<Map<String, Any>>> {
-    return Supplier {
-      object : Iterator<Map<String, Any>> {
-        override fun hasNext(): Boolean {
-          return true
-        }
+  val randomNames: Iterator<Map<String, Any>> =
+    object : Iterator<Map<String, Any>> {
+      override fun hasNext(): Boolean {
+        return true
+      }
 
-        override fun next(): Map<String, Any> {
-          return mapOf("firstName" to randomString(20), "lastName" to randomString(20))
-        }
+      override fun next(): Map<String, Any> {
+        return mapOf("firstName" to randomString(20), "lastName" to randomString(20))
       }
     }
-  }
 }

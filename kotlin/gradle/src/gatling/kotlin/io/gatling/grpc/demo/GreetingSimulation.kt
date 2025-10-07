@@ -27,22 +27,22 @@ class GreetingSimulation : Simulation() {
 
   private val unary =
     scenario("Greet Unary")
-      .feed(Feeders.channelCredentials().circular())
-      .feed(Feeders.randomNames())
+      .feed(Feeders.channelCredentials.circular())
+      .feed(Feeders.randomNames)
       .exec(
         grpc("Greet")
           .unary(GreetingServiceGrpc.getGreetMethod())
           .send(greetRequest)
           .check(
             statusCode().shouldBe(Status.Code.OK),
-            response(GreetResponse::getResult).isEL("Hello #{firstName} #{lastName}")
+            response(GreetResponse::getResult).isEL("Hello #{firstName} #{lastName}"),
           )
       )
 
   private val deadlines =
     scenario("Greet w/ Deadlines")
-      .feed(Feeders.channelCredentials().circular())
-      .feed(Feeders.randomNames())
+      .feed(Feeders.channelCredentials.circular())
+      .feed(Feeders.randomNames)
       .exec(
         grpc("Greet w/ Deadlines")
           .unary(GreetingServiceGrpc.getGreetWithDeadlineMethod())
@@ -51,8 +51,10 @@ class GreetingSimulation : Simulation() {
           .check(statusCode().shouldBe(Status.Code.DEADLINE_EXCEEDED))
       )
 
+  // spotless:off
   // ./gradlew -Dgrpc.scenario=unary gatlingRun --simulation io.gatling.grpc.demo.GreetingSimulation
   // ./gradlew -Dgrpc.scenario=deadlines gatlingRun --simulation io.gatling.grpc.demo.GreetingSimulation
+  // spotless:on
 
   init {
     val name = System.getProperty("grpc.scenario")
