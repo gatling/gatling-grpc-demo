@@ -28,7 +28,7 @@ public class Configuration {
         return TlsServerCredentials.newBuilder()
                 .keyManager(serverCertificate(), serverPrivateKey())
                 .trustManager(certificateAuthority())
-                .clientAuth(TlsServerCredentials.ClientAuth.REQUIRE)
+                .clientAuth(TlsServerCredentials.ClientAuth.OPTIONAL)
                 .build();
     }
 }
