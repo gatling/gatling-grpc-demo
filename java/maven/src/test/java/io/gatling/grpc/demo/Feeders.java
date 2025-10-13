@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.Supplier;
 
 import io.gatling.javaapi.core.CoreDsl;
 import io.gatling.javaapi.core.FeederBuilder;
@@ -27,18 +26,16 @@ public class Feeders {
                                 ClassLoader.getSystemResourceAsStream("certs/client" + i + ".key"))
                         .trustManager(ClassLoader.getSystemResourceAsStream("certs/ca.crt"))
                         .build();
-              AVAILABLE_CHANNEL_CREDENTIALS.add(channelCredentials);
+                AVAILABLE_CHANNEL_CREDENTIALS.add(channelCredentials);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static FeederBuilder<Object> CHANNEL_CREDENTIALS = CoreDsl.listFeeder(
-      AVAILABLE_CHANNEL_CREDENTIALS.stream()
-        .map(channelCredentials -> Map.<String, Object>of("channelCredentials", channelCredentials))
-        .toList()
-    );
+    public static FeederBuilder<Object> CHANNEL_CREDENTIALS = CoreDsl.listFeeder(AVAILABLE_CHANNEL_CREDENTIALS.stream()
+            .map(channelCredentials -> Map.<String, Object>of("channelCredentials", channelCredentials))
+            .toList());
 
     private static String random(String alphabet, int n) {
         StringBuilder s = new StringBuilder();
