@@ -60,7 +60,7 @@ spotless {
 }
 
 application {
-  mainClassName =
+  mainClass =
     project.hasProperty("mainClass") ?
       project.property("mainClass") :
       "io.gatling.grpc.demo.server.Main"
