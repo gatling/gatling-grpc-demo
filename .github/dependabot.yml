@@ -22,6 +22,9 @@ updates:
       kotlin:
         patterns:
           - "org.jetbrains.kotlin.*"
+      protobuf:
+        patterns:
+          - "com.google.protobuf*"
     schedule:
       interval: "weekly"
       day: "monday" # explicit, even tough it's the weekly default
