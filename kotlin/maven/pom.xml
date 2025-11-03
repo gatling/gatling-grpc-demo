@@ -8,7 +8,7 @@
     <version>3.14.7</version>
 
     <properties>
-        <!-- Change the line bellow if you're compiling with JDK 11 or 21 -->
+        <!-- Change the line below if you're compiling with JDK 17+ -->
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <gatling.version>${project.version}</gatling.version>
