@@ -20,7 +20,7 @@
         <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <protobuf.version>4.33.0</protobuf.version>
-        <protobuf-maven-plugin.version>4.0.1</protobuf-maven-plugin.version>
+        <protobuf-maven-plugin.version>4.0.2</protobuf-maven-plugin.version>
         <spotless.version>3.0.0</spotless.version>
     </properties>
 
