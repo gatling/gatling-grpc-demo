@@ -10,7 +10,10 @@ import java.util.concurrent.ThreadLocalRandom
 
 class CalculatorSimulation : Simulation() {
 
-  private val baseGrpcProtocol = grpc.forAddress("localhost", 50052)
+  private val calculatorServer =
+    grpc.serverConfiguration("calculator").forAddress("localhost", 50052)
+
+  private val baseGrpcProtocol = grpc.serverConfigurations(calculatorServer)
 
   private val unary =
     scenario("Calculator Unary")

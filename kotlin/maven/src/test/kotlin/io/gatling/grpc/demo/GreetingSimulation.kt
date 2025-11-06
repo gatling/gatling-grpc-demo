@@ -10,11 +10,14 @@ import java.time.Duration
 
 class GreetingSimulation : Simulation() {
 
-  private val baseGrpcProtocol =
+  private val greetingServer =
     grpc
+      .serverConfiguration("greeting")
       .forAddress("localhost", 50051)
       .channelCredentials("#{channelCredentials}")
       .overrideAuthority("gatling-grpc-demo-test-server")
+
+  private val baseGrpcProtocol = grpc.serverConfigurations(greetingServer)
 
   private val greeting = { session: Session ->
     val firstName = session.getString("firstName")

@@ -5,10 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import io.gatling.grpc.demo.calculator.*;
 import io.gatling.javaapi.core.ScenarioBuilder;
 import io.gatling.javaapi.core.Simulation;
-import io.gatling.javaapi.grpc.GrpcBidirectionalStreamingServiceBuilder;
-import io.gatling.javaapi.grpc.GrpcClientStreamingServiceBuilder;
-import io.gatling.javaapi.grpc.GrpcProtocolBuilder;
-import io.gatling.javaapi.grpc.GrpcServerStreamingServiceBuilder;
+import io.gatling.javaapi.grpc.*;
 
 import io.grpc.Status;
 
@@ -17,7 +14,10 @@ import static io.gatling.javaapi.grpc.GrpcDsl.*;
 
 public class CalculatorSimulation extends Simulation {
 
-    GrpcProtocolBuilder baseGrpcProtocol = grpc.forAddress("localhost", 50052);
+    GrpcServerConfigurationBuilder calculatorServer =
+            grpc.serverConfiguration("calculator").forAddress("localhost", 50052);
+
+    GrpcProtocolBuilder baseGrpcProtocol = grpc.serverConfigurations(calculatorServer);
 
     ScenarioBuilder unary = scenario("Calculator Unary")
             .exec(grpc("Sum")

@@ -11,6 +11,7 @@ import io.gatling.javaapi.core.ScenarioBuilder;
 import io.gatling.javaapi.core.Session;
 import io.gatling.javaapi.core.Simulation;
 import io.gatling.javaapi.grpc.GrpcProtocolBuilder;
+import io.gatling.javaapi.grpc.GrpcServerConfigurationBuilder;
 
 import io.grpc.Status;
 
@@ -20,9 +21,12 @@ import static io.gatling.javaapi.grpc.GrpcDsl.*;
 
 public class GreetingSimulation extends Simulation {
 
-    GrpcProtocolBuilder baseGrpcProtocol = grpc.forAddress("localhost", 50051)
+    GrpcServerConfigurationBuilder greetingServer = grpc.serverConfiguration("greeting")
+            .forAddress("localhost", 50051)
             .channelCredentials("#{channelCredentials}")
             .overrideAuthority("gatling-grpc-demo-test-server");
+
+    GrpcProtocolBuilder baseGrpcProtocol = grpc.serverConfigurations(greetingServer);
 
     Function<Session, Greeting> greeting = session -> {
         String firstName = session.getString("firstName");

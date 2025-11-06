@@ -4,10 +4,13 @@ import { grpc, response, statusCode } from "@gatling.io/grpc";
 import { channelCredentials, randomNames } from "./feeders";
 
 export default simulation((setUp) => {
-  const baseGrpcProtocol = grpc
+  const greetingServer = grpc
+    .serverConfiguration("greeting")
     .forAddress("localhost", 50051)
     .channelCredentials("#{channelCredentials}")
     .overrideAuthority("gatling-grpc-demo-test-server");
+
+  const baseGrpcProtocol = grpc.serverConfigurations(greetingServer);
 
   const greeting = (session) => {
     const firstName = session.get("firstName");
