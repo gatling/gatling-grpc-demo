@@ -5,7 +5,7 @@ plugins {
 
   id("com.google.protobuf")   version "0.9.6"
   id("com.diffplug.spotless") version "8.2.0"
-  id("io.gatling.gradle")     version "3.14.9.5"
+  id("io.gatling.gradle")     version "3.14.9.8"
 }
 
 tasks.withType(JavaCompile::class) {
