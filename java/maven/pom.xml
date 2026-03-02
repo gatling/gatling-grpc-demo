@@ -11,8 +11,8 @@
         <!-- Change the line below if you're compiling with JDK 17+ -->
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <gatling.version>${project.version}</gatling.version>
-        <gatling-grpc.version>3.14.9.1</gatling-grpc.version>
+        <gatling.version>3.15.0</gatling.version>
+        <gatling-grpc.version>3.15.0</gatling-grpc.version>
         <gatling-maven-plugin.version>4.21.0</gatling-maven-plugin.version>
         <grpc.version>1.75.0</grpc.version>
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
