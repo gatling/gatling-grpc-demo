@@ -10,7 +10,9 @@ import {
 import { grpc, response, statusCode } from "@gatling.io/grpc";
 
 export default simulation((setUp) => {
-  const baseGrpcProtocol = grpc.forAddress("localhost", 50052);
+  const calculatorServer = grpc.serverConfiguration("calculator").forAddress("localhost", 50052);
+
+  const baseGrpcProtocol = grpc.serverConfigurations(calculatorServer);
 
   const unary = scenario("Calculator Unary").exec(
     grpc("Sum")
