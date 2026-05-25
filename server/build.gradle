@@ -18,7 +18,7 @@ dependencies {
   implementation "io.grpc:grpc-protobuf:1.81.0"
   implementation "io.grpc:grpc-services:1.81.0" // reflection
   implementation "org.bouncycastle:bcpkix-jdk18on:1.84"
-  implementation "org.slf4j:slf4j-api:2.0.17"
+  implementation "org.slf4j:slf4j-api:2.0.18"
 }
 
 idea {
