@@ -5,7 +5,7 @@ plugins {
 
   id("com.google.protobuf")   version "0.10.0"
   id("com.diffplug.spotless") version "8.5.1"
-  id("io.gatling.gradle")     version "3.15.0.3"
+  id("io.gatling.gradle")     version "3.15.1"
 }
 
 tasks.withType(JavaCompile::class) {
@@ -24,7 +24,7 @@ repositories {
 
 dependencies {
   gatlingApi("com.google.protobuf:protobuf-kotlin:4.35.0")
-  gatlingImplementation("io.gatling:gatling-grpc-java:3.15.0")
+  gatlingImplementation("io.gatling:gatling-grpc-java:3.15.1")
 }
 
 gatling {
