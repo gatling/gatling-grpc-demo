@@ -21,7 +21,7 @@
         <maven-resources-plugin.version>3.5.0</maven-resources-plugin.version>
         <protobuf.version>4.33.0</protobuf.version>
         <protobuf-maven-plugin.version>5.1.5</protobuf-maven-plugin.version>
-        <spotless.version>3.6.0</spotless.version>
+        <spotless.version>3.7.0</spotless.version>
     </properties>
 
     <dependencies>
