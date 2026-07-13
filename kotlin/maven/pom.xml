@@ -13,7 +13,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <gatling.version>3.15.1</gatling.version>
         <gatling-grpc.version>3.15.1</gatling-grpc.version>
-        <gatling-maven-plugin.version>4.21.7</gatling-maven-plugin.version>
+        <gatling-maven-plugin.version>4.21.9</gatling-maven-plugin.version>
         <grpc.version>1.82.1</grpc.version>
         <kotlin.version>2.4.0</kotlin.version>
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
