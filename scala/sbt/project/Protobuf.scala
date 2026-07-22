@@ -1,24 +1,23 @@
-import sbt.Keys._
-import sbt._
-import sbtprotoc.ProtocPlugin.autoImport._
+import sbt.Keys.*
+import sbt.*
+import sbtprotoc.ProtocPlugin.autoImport.*
 
 object Protobuf {
-
   private val commons = Seq(
-    PB.protocVersion := "4.33.0" // scalapb.compiler.Version.protobufVersion points to an older version
+    PB.protocVersion := "4.35.1" // scalapb.compiler.Version.protobufVersion points to an older version
   )
 
-  val javaSettings: Seq[Def.Setting[_]] = commons ++ Seq(
+  val javaSettings: Seq[Def.Setting[?]] = commons ++ Seq(
     Test / PB.targets := Seq(
       PB.gens.java -> (Test / sourceManaged).value,
       PB.gens.plugin("grpc-java") -> (Test / sourceManaged).value
     ),
     libraryDependencies ++= Seq(
-      ("io.grpc" % "protoc-gen-grpc-java" % "1.75.0").asProtocPlugin()
+      ("io.grpc" % "protoc-gen-grpc-java" % "1.82.2").asProtocPlugin()
     )
   )
 
-  val scalaSettings: Seq[Def.Setting[_]] = commons ++ Seq(
+  val scalaSettings: Seq[Def.Setting[?]] = commons ++ Seq(
     Test / PB.targets := Seq(
       scalapb.gen() -> (Test / sourceManaged).value
     ),
