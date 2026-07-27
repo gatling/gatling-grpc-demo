@@ -64,7 +64,7 @@ jobs:
 
       - name: Build Scala sbt
         working-directory: scala/sbt
-        run: sbt Gatling/compile
+        run: sbt Test/compile
 
       - name: Build server
         working-directory: server
