@@ -37,7 +37,7 @@ jobs:
           node-version: 20
 
       - name: Set up sbt
-        uses: sbt/setup-sbt@v1.5.2
+        uses: sbt/setup-sbt@v1.5.4
 
       - name: Build Java Maven
         working-directory: java/maven
