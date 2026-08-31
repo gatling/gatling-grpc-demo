@@ -1,4 +1,4 @@
-addSbtPlugin("io.gatling"         % "gatling-sbt"           % "4.19.1")
+addSbtPlugin("io.gatling"         % "gatling-sbt"           % "4.19.2")
 addSbtPlugin("com.thesamet"       % "sbt-protoc"            % "1.1.0-RC2")
 
 libraryDependencies ++= Seq(
