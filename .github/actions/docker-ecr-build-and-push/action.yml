@@ -58,10 +58,15 @@ runs:
     - name: Prepare docker tags
       id: tags
       shell: bash
+      env:
+        REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+        IMAGE_NAME: ${{ inputs.docker-image-name }}
+        IMAGE_VERSION: ${{ inputs.docker-image-version }}
+        INPUT_LATEST: ${{ inputs.docker-tag-latest }}
       run: |
-        tags="${{ steps.ecr-login.outputs.registry }}/${{ inputs.docker-image-name }}:${{ inputs.docker-image-version }}"
-        if [[ "${{ inputs.docker-tag-latest }}" = "true" ]]; then 
-          tags="$tags,${{ steps.ecr-login.outputs.registry }}/${{ inputs.docker-image-name }}:latest"
+        tags="${REGISTRY}/${IMAGE_NAME}:${IMAGE_VERSION}"
+        if [[ "${INPUT_LATEST}" = "true" ]]; then 
+          tags="$tags,${REGISTRY}/${IMAGE_NAME}:latest"
         fi
         echo "tags=$tags" >> $GITHUB_OUTPUT
 
@@ -113,6 +118,8 @@ runs:
     - name: Extract Image Name
       id: extract-image-name
       shell: bash
+      env:
+        BUILD_METADATA: ${{ steps.build-and-push.outputs.metadata }}
       run: |
-        IMAGE_NAME=$(echo '${{ steps.build-and-push.outputs.metadata }}' | jq -r '.["image.name"]')
+        IMAGE_NAME=$(echo "${BUILD_METADATA}" | jq -r '.["image.name"]')
         echo "image=$IMAGE_NAME" >> "$GITHUB_OUTPUT"
