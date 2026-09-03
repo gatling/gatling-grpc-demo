@@ -38,7 +38,7 @@ jobs:
       - name: Build and push private gRPC demo server docker image (sandbox/eu-west-3)
         uses: ./.github/actions/docker-ecr-build-and-push
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_SANDBOX_RELEASE }}
+          role-to-assume: ${{ vars.AWS_ROLE_SANDBOX_RELEASE }}
           aws-region: eu-west-3
           docker-build-args: LABEL="gatling-grpc-demo-server"
           docker-context: server/build/distributions/
