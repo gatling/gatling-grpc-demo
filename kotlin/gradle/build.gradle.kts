@@ -1,7 +1,7 @@
 plugins {
   idea
   kotlin("jvm")               version "2.4.20"
-  kotlin("plugin.allopen")    version "2.4.20"
+  kotlin("plugin.allopen")    version "2.4.21"
 
   id("com.google.protobuf")   version "0.10.0"
   id("com.diffplug.spotless") version "8.10.3"
