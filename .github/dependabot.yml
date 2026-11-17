@@ -68,3 +68,5 @@ updates:
       time: "07:00" # UTC
     cooldown:
       default-days: 7
+      exclude:
+        - "@gatling.io/*"
